@@ -2,6 +2,10 @@ version: '3.8'
 services:
   fastapi:
     build: .
+    env_file:
+      - .env
+    environment:
+      - DOCKER_ENV=1
     ports:
       - "8021:8021"
     restart: unless-stopped
