@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  fastapi:
+    build: .
+    ports:
+      - "8021:8021"
+    restart: unless-stopped
+
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    command: tunnel --no-autoupdate run --url http://fastapi:8021
+    depends_on:
+      - fastapi
+    environment:
+      - TUNNEL_TOKEN=${TUNNEL_TOKEN}
+    restart: unless-stopped
