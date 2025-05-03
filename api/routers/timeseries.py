@@ -1,40 +1,25 @@
 from fastapi import APIRouter, Query
 from datetime import datetime
 from typing import Any, Dict
-from sqlalchemy import Table
-from api.db import engine, metadata, database
-
-# Autoload materialized view tables for timeseries
-view_price_1min = Table("price_1min", metadata, autoload_with=engine, schema="public")
-view_pv_1min = Table("pv_1min", metadata, autoload_with=engine, schema="public")
-view_load_1min = Table("load_1min", metadata, autoload_with=engine, schema="public")
-view_weather_obs_1min = Table("weather_obs_1min", metadata, autoload_with=engine, schema="public")
-view_weather_fcst_1min = Table("weather_fcst_1min", metadata, autoload_with=engine, schema="public")
+from sqlalchemy import Table, Column
+from api.db import database
+import api.db as db
 
 router = APIRouter(prefix="/timeseries", tags=["timeseries"])
 
-async def fetch_timeseries(table, filters: Dict[str, Any], start: datetime, end: datetime):
-    """
-    Fetch time series data from the specified table with date range filtering.
-    
-    Args:
-        table: SQLAlchemy Table object to query
-        filters: Dictionary of column names and values to filter by
-        start: Start datetime (inclusive)
-        end: End datetime (inclusive)
-    """
+async def fetch_timeseries(table: Table, time_column: Column, filters: Dict[str, Any], start: datetime, end: datetime):
     filter_conditions = [table.c[key] == value for key, value in filters.items()]
     date_conditions = [
-        table.c.time >= start,
-        table.c.time <= end
+        time_column >= start,
+        time_column <= end
     ]
-    
+
     query = (
         table.select()
         .where(*filter_conditions + date_conditions)
-        .order_by(table.c.time)
+        .order_by(time_column)
     )
-    
+
     return await database.fetch_all(query)
 
 @router.get("/price")
@@ -43,7 +28,7 @@ async def get_price(
     start: datetime = Query(...),
     end: datetime = Query(...)
 ):
-    return await fetch_timeseries(view_price_1min, {"region_id": region_id}, start, end)
+    return await fetch_timeseries(db.price_tbl, db.price_tbl.c.time, {"region_id": region_id}, start, end)
 
 @router.get("/pv")
 async def get_pv(
@@ -51,7 +36,7 @@ async def get_pv(
     start: datetime = Query(...),
     end: datetime = Query(...)
 ):
-    return await fetch_timeseries(view_pv_1min, {"household_id": household_id}, start, end)
+    return await fetch_timeseries(db.pv_tbl, db.pv_tbl.c.time, {"household_id": household_id}, start, end)
 
 @router.get("/load")
 async def get_load(
@@ -59,7 +44,7 @@ async def get_load(
     start: datetime = Query(...),
     end: datetime = Query(...)
 ):
-    return await fetch_timeseries(view_load_1min, {"household_id": household_id}, start, end)
+    return await fetch_timeseries(db.load_tbl, db.load_tbl.c.time, {"household_id": household_id}, start, end)
 
 @router.get("/weather_obs")
 async def get_weather_obs(
@@ -67,7 +52,7 @@ async def get_weather_obs(
     start: datetime = Query(...),
     end: datetime = Query(...)
 ):
-    return await fetch_timeseries(view_weather_obs_1min, {"location_id": location_id}, start, end)
+    return await fetch_timeseries(db.weather_obs_tbl, db.weather_obs_tbl.c.datetime, {"location_id": location_id}, start, end)
 
 @router.get("/weather_fcst")
 async def get_weather_forecast(
@@ -75,4 +60,4 @@ async def get_weather_forecast(
     start: datetime = Query(...),
     end: datetime = Query(...)
 ):
-    return await fetch_timeseries(view_weather_fcst_1min, {"location_id": location_id}, start, end)
+    return await fetch_timeseries(db.weather_fc_tbl, db.weather_fc_tbl.c.forecast_run, {"location_id": location_id}, start, end)

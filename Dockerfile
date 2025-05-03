@@ -19,7 +19,5 @@ COPY . .
 # Expose port 8021
 EXPOSE 8021
 
-COPY api/start-fastapi.sh /start-fastapi.sh
-RUN chmod +x /start-fastapi.sh
-
-CMD ["/start-fastapi.sh"]
+# Run the FastAPI app with Uvicorn
+CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8021"]

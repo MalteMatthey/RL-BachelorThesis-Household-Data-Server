@@ -18,10 +18,9 @@ async def lifespan(app: FastAPI):
     await database.connect()
     print("Database connected. Reflecting schema...")
     try:
-        await reflect_db_schema() # Call reflection here
+        await reflect_db_schema()
     except Exception as e:
         print(f"Error reflecting database schema: {e}")
-        # Optionally, handle the error more gracefully (e.g., shutdown)
         raise # Re-raise to prevent app from starting incorrectly
     print("Schema reflected. Application startup complete.")
     yield
