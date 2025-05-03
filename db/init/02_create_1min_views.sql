@@ -32,9 +32,8 @@ GROUP BY household_id, time_bucket('1 minute', time);
 CREATE MATERIALIZED VIEW weather_obs_1min
 WITH (timescaledb.continuous) AS
 SELECT
-    time_bucket('1 minute', datetime) AS time,            -- use datetime here
+    time_bucket('1 minute', datetime) AS time,
     location_id,
-    last(datetime_epoch,   datetime) AS datetime_epoch,   -- …and here
     last(tempmax,          datetime) AS tempmax,
     last(tempmin,          datetime) AS tempmin,
     last(temp,             datetime) AS temp,
@@ -91,7 +90,6 @@ SELECT
     location_id,
     last(target_time,     target_time)     AS target_time,
     last(forecast_run,    target_time)     AS forecast_run,
-    last(target_epoch,    target_time)     AS target_epoch,
     last(tempmax,         target_time)     AS tempmax,
     last(tempmin,         target_time)     AS tempmin,
     last(temp,            target_time)     AS temp,

@@ -22,11 +22,11 @@ CREATE TABLE households (
     location_id  INT              NOT NULL REFERENCES locations(location_id)
 );
 
--- 4) Raw prices per region (hourly native)
+-- 4) Raw prices per region
 CREATE TABLE electricity_prices (
-    time           TIMESTAMPTZ      NOT NULL,    -- price timestamp
+    time           TIMESTAMPTZ      NOT NULL,
     region_id      INT              NOT NULL REFERENCES regions(region_id),
-    price_eur_mwh  DOUBLE PRECISION NOT NULL,    -- EUR/MWh
+    price_eur_mwh  DOUBLE PRECISION NOT NULL,
     PRIMARY KEY (time, region_id)
 );
 SELECT create_hypertable(
@@ -39,7 +39,6 @@ SELECT create_hypertable(
 -- 5) Weather observations per location
 CREATE TABLE weather_observations (
     datetime         TIMESTAMPTZ      NOT NULL,    
-    datetime_epoch   BIGINT           NOT NULL,    
     location_id      INT              NOT NULL REFERENCES locations(location_id),
     tempmax          DOUBLE PRECISION,               
     tempmin          DOUBLE PRECISION,               
@@ -99,7 +98,6 @@ SELECT create_hypertable(
 CREATE TABLE weather_forecasts (
     forecast_run    TIMESTAMPTZ      NOT NULL,
     target_time     TIMESTAMPTZ      NOT NULL,
-    target_epoch    BIGINT           NOT NULL,
     location_id     INT              NOT NULL REFERENCES locations(location_id),
     tempmax          DOUBLE PRECISION,
     tempmin          DOUBLE PRECISION,
@@ -155,11 +153,11 @@ SELECT create_hypertable(
     chunk_time_interval => INTERVAL '1 day'
 );
 
--- 7) PV generation per household (native, e.g. 1 min)
+-- 7) PV generation per household
 CREATE TABLE pv_generation (
-    time             TIMESTAMPTZ      NOT NULL,    -- measurement timestamp
+    time             TIMESTAMPTZ      NOT NULL,
     household_id     INT              NOT NULL REFERENCES households(household_id),
-    generation_kwh   DOUBLE PRECISION NOT NULL,    -- kWh in interval
+    generation_kwh   DOUBLE PRECISION NOT NULL,
     PRIMARY KEY (time, household_id)
 );
 SELECT create_hypertable(
@@ -169,11 +167,11 @@ SELECT create_hypertable(
     chunk_time_interval => INTERVAL '1 day'
 );
 
--- 8) Load data per household (native, e.g. 1 min or 60 min)
+-- 8) Load data per household
 CREATE TABLE load_data (
-    time             TIMESTAMPTZ      NOT NULL,    -- measurement timestamp
+    time             TIMESTAMPTZ      NOT NULL,
     household_id     INT              NOT NULL REFERENCES households(household_id),
-    consumption_kwh  DOUBLE PRECISION NOT NULL,    -- kWh in interval
+    consumption_kwh  DOUBLE PRECISION NOT NULL,
     PRIMARY KEY (time, household_id)
 );
 SELECT create_hypertable(
