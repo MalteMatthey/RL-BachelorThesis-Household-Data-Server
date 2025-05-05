@@ -72,9 +72,6 @@ CREATE TABLE weather_observations (
     sunset           TEXT,
     moonphase        DOUBLE PRECISION,
     conditions       TEXT,
-    description      TEXT,
-    icon             TEXT,
-    source           TEXT,
     windspeed50      DOUBLE PRECISION,
     winddir50        DOUBLE PRECISION,
     windspeed80      DOUBLE PRECISION,
@@ -84,7 +81,6 @@ CREATE TABLE weather_observations (
     ghiradiation     DOUBLE PRECISION,
     dniradiation     DOUBLE PRECISION,
     difradiation     DOUBLE PRECISION,
-    gtiradiation     DOUBLE PRECISION,
     sunelevation     DOUBLE PRECISION,
     PRIMARY KEY (datetime, location_id)
 );
@@ -131,9 +127,6 @@ CREATE TABLE weather_forecasts (
     sunset           TEXT,
     moonphase        DOUBLE PRECISION,
     conditions       TEXT,
-    description      TEXT,
-    icon             TEXT,
-    source           TEXT,
     windspeed50      DOUBLE PRECISION,
     winddir50        DOUBLE PRECISION,
     windspeed80      DOUBLE PRECISION,
@@ -143,7 +136,6 @@ CREATE TABLE weather_forecasts (
     ghiradiation     DOUBLE PRECISION,
     dniradiation     DOUBLE PRECISION,
     difradiation     DOUBLE PRECISION,
-    gtiradiation     DOUBLE PRECISION,
     sunelevation     DOUBLE PRECISION,
     PRIMARY KEY (forecast_run, target_time, location_id)
 );

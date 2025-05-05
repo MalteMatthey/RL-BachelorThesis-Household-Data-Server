@@ -119,9 +119,20 @@ async def _fetch_external_data(
     # Fetch weather data once for each unique location ID present in the batch.
     # This avoids redundant calls if multiple households share the same location.
     for loc_id in location_ids:
-        print(f"Fetching weather data for location {loc_id} from {start_time} to {end_time}")
-        obs_data = await fetch_external_weather_observations(loc_id, start_time, end_time)
-        fc_data = await fetch_external_weather_forecasts(loc_id, start_time, end_time)
+        # Get longitude and latitude from the location ID
+        query = select(db.locations_tbl.c.latitude, db.locations_tbl.c.longitude).where(
+            db.locations_tbl.c.location_id == loc_id)
+        location = await database.fetch_one(query)
+        if not location:
+            print(f"Warning: Location ID {loc_id} not found. Skipping weather fetch for this location.")
+            continue
+        lat = location['latitude']
+        lon = location['longitude']
+
+        print(f"Fetching weather data for location {loc_id} (lat: {lat}, lon: {lon}) from {start_time} to {end_time}")
+        # Pass location_id to the fetching functions
+        obs_data = await fetch_external_weather_observations(loc_id, lat, lon, start_time, end_time)
+        fc_data = await fetch_external_weather_forecasts(loc_id, lat, lon, start_time, end_time)
         weather_obs_to_insert.extend(obs_data)
         weather_fc_to_insert.extend(fc_data)
 

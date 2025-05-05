@@ -39,9 +39,6 @@ class WeatherObservationIn(BaseModel):
     sunset: Optional[str] = None
     moonphase: Optional[float] = None
     conditions: Optional[str] = None
-    description: Optional[str] = None
-    icon: Optional[str] = None
-    source: Optional[str] = None
     windspeed50: Optional[float] = None
     winddir50: Optional[float] = None
     windspeed80: Optional[float] = None
@@ -51,12 +48,7 @@ class WeatherObservationIn(BaseModel):
     ghiradiation: Optional[float] = None
     dniradiation: Optional[float] = None
     difradiation: Optional[float] = None
-    gtiradiation: Optional[float] = None
     sunelevation: Optional[float] = None
-
-
-class BulkWeatherObs(BaseModel):
-    data: List[WeatherObservationIn] = Field(...)
 
 
 class PVIn(BaseModel):
@@ -83,10 +75,6 @@ class PriceIn(BaseModel):
     time: datetime
     region_id: int
     price_eur_mwh: float
-
-
-class BulkPrice(BaseModel):
-    data: List[PriceIn] = Field(...)
 
 
 class RegionIn(BaseModel):
@@ -143,9 +131,6 @@ class WeatherForecastIn(BaseModel):
     sunset: Optional[str] = None
     moonphase: Optional[float] = None
     conditions: Optional[str] = None
-    description: Optional[str] = None
-    icon: Optional[str] = None
-    source: Optional[str] = None
     windspeed50: Optional[float] = None
     winddir50: Optional[float] = None
     windspeed80: Optional[float] = None
@@ -155,9 +140,5 @@ class WeatherForecastIn(BaseModel):
     ghiradiation: Optional[float] = None
     dniradiation: Optional[float] = None
     difradiation: Optional[float] = None
-    gtiradiation: Optional[float] = None
     sunelevation: Optional[float] = None
 
-
-class BulkWeatherForecast(BaseModel):
-    data: List[WeatherForecastIn] = Field(...)
