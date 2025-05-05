@@ -137,8 +137,8 @@ async def create_household(household: HouseholdIn):
     # Insert household and return the created record
     query = (
         insert(db.households_tbl)
-        .values(location_id=household.location_id)
-        .returning(db.households_tbl.c.household_id, db.households_tbl.c.location_id)
+        .values(location_id=household.location_id, name=household.name)
+        .returning(db.households_tbl.c.household_id, db.households_tbl.c.location_id, db.households_tbl.c.name)
     )
 
     created_household = await database.fetch_one(query)

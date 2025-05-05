@@ -105,6 +105,7 @@ class LocationIn(BaseModel):
 class HouseholdIn(BaseModel):
     household_id: Optional[int] = None
     location_id: int
+    name: str
 
 
 class WeatherForecastIn(BaseModel):
