@@ -1,12 +1,13 @@
-# Refactored Code
 import os
 import httpx
+import json
 from datetime import datetime, timedelta, timezone, date
 from typing import List, Dict, Any, Tuple, Optional, Type
 
-import pydantic # Assuming schemas are Pydantic models
+import pydantic
 
 from ..schemas import WeatherObservationIn, WeatherForecastIn
+from .b2_backup import b2_handler
 
 # --- Configuration ---
 
@@ -19,7 +20,6 @@ if not API_KEY:
 BASE_URL = "https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/"
 
 # Define all elements potentially available from the Visual Crossing API
-# Grouping related elements can improve readability if the list grows very large.
 _ALL_AVAILABLE_ELEMENTS = [
     # Time
     "datetimeEpoch",
@@ -54,7 +54,7 @@ ELEMENTS_TO_REQUEST = sorted([
 
 # --- Constants ---
 _DEFAULT_TIMEOUT_SECONDS = 30.0
-_FORECAST_TIMEOUT_SECONDS = 30.0 # Can be adjusted if forecasts take longer
+_FORECAST_TIMEOUT_SECONDS = 30.0
 _OBSERVATION_TIMEOUT_SECONDS = 300.0 # Allow longer for potentially large historical pulls
 _MIN_FORECAST_DATE = datetime(2020, 1, 1, tzinfo=timezone.utc)
 _DATE_FORMAT = "%Y-%m-%d"
@@ -70,32 +70,59 @@ async def _make_visual_crossing_request(
     timeout: float = _DEFAULT_TIMEOUT_SECONDS
 ) -> Optional[Dict[str, Any]]:
     """
-    Makes a GET request to the Visual Crossing API, handles common HTTP errors,
+    Makes a GET request to the Visual Crossing API, checking B2 backup first.
+    Handles common HTTP errors, saves successful responses to B2,
     and returns the parsed JSON response.
 
     Args:
         url: The API endpoint URL.
-        params: Dictionary of query parameters for the request.
+        params: Dictionary of query parameters for the request (excluding API key).
         timeout: Request timeout in seconds.
 
     Returns:
         The parsed JSON response as a dictionary, or None if an error occurs.
     """
-    params["key"] = API_KEY # Ensure API key is always included
+    # --- Check B2 Backup First ---
+    params_for_backup_check = params.copy()
+
+    backup_filename = await b2_handler.check_backup(url, params_for_backup_check)
+    if backup_filename:
+        # Backup exists, try to download and parse it
+        backup_data = await b2_handler.get_backup(backup_filename)
+        if backup_data:
+            print(f"Using cached response from B2 backup: {backup_filename}")
+            return backup_data # Return parsed data from backup
+        else:
+            print(f"Failed to retrieve or parse backup {backup_filename}. Proceeding with live API call.")
+
+    # --- Proceed with Live API Call ---
+    request_params = params.copy()
+    # Ensure API key is included in the request parameters (not earlier to keep filenames for backup consistent)
+    request_params["key"] = API_KEY
+
     async with httpx.AsyncClient() as client:
         try:
-            print(f"Making API request to: {url} with params: {params}")
-            response = await client.get(url, params=params, timeout=timeout)
+            # print(f"Making live API request to: {url} with params affecting request: {request_params}")
+            response = await client.get(url, params=request_params, timeout=timeout)
             response.raise_for_status()  # Raises HTTPStatusError for 4xx/5xx responses
+
+            # --- Save Successful Response to B2 ---
+            # Use the original params (without API key) for saving
+            await b2_handler.save_backup(url, params_for_backup_check, response.content)
+
+            # Return parsed JSON from the live response
             return response.json()
+
         except httpx.RequestError as exc:
             print(f"Network error requesting {exc.request.url!r}: {exc}")
             return None
         except httpx.HTTPStatusError as exc:
             print(f"HTTP error {exc.response.status_code} for {exc.request.url!r}: {exc.response.text}")
             return None
+        except json.JSONDecodeError as e:
+             print(f"Error decoding JSON from live API response for {url}: {e}")
+             return None
         except Exception as e:
-            # Catch unexpected errors during request or JSON parsing
             print(f"An unexpected error occurred during API request/processing: {e}")
             return None
 
@@ -200,7 +227,7 @@ def _build_observation_request_details(
         "elements": ",".join(ELEMENTS_TO_REQUEST), # Use the filtered list
         "contentType": _API_CONTENT_TYPE
     }
-    print(f"Building observation request: URL={url}, Params={params}")
+    # print(f"Building observation request: URL={url}, Params={params}")
     return url, params
 
 
@@ -273,7 +300,7 @@ def _build_forecast_request_details(
         "contentType": _API_CONTENT_TYPE,
         "forecastBasisDate": forecast_basis_date_str # Key parameter for historical forecast
     }
-    print(f"Building forecast request: URL={url}, Params={params}")
+    # print(f"Building forecast request: URL={url}, Params={params}")
     return url, params
 
 
