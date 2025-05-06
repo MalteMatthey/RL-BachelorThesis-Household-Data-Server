@@ -5,6 +5,7 @@ import pandas as pd
 from datetime import datetime, timedelta, timezone
 from typing import List, Dict, Any, Optional
 import json
+import requests
 
 from entsoe import EntsoePandasClient
 from entsoe.exceptions import NoMatchingDataError, InvalidPSRTypeError
@@ -128,6 +129,12 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
             else:
                 print("No data received from ENTSO-E, nothing to save to B2.")
 
+        except requests.exceptions.HTTPError as e:
+            if e.response.status_code == 401:
+                print(f"Authentication failed: Invalid ENTSOE_API_KEY ('{ENTSOE_API_KEY}' is not a valid API key)")
+            else:
+                print(f"HTTP error from ENTSO-E API: {e.response.status_code} - {e.response.text}")
+            price_data_series = pd.Series(dtype=float)
         except NoMatchingDataError:
             print(f"No matching data found on ENTSO-E for {country_code} in the period.")
             price_data_series = pd.Series(dtype=float)
