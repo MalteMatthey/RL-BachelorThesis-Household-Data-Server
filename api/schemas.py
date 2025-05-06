@@ -73,18 +73,19 @@ class BulkLoad(BaseModel):
 
 class PriceIn(BaseModel):
     time: datetime
-    region_id: int
+    price_region_id: int
     price_eur_mwh: float
 
 
-class RegionIn(BaseModel):
-    region_id: Optional[int] = None
+class PriceRegionIn(BaseModel):
+    price_region_id: Optional[int] = None
     name: str
+    bidding_zone_eic_code: str
 
 
 class LocationIn(BaseModel):
     location_id: Optional[int] = None
-    region_id: int
+    price_region_id: int
     name: str
     latitude: float
     longitude: float

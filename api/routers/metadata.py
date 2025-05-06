@@ -5,20 +5,27 @@ from sqlalchemy import select, insert
 
 import api.db as db
 from api.db import database
-from api.schemas import RegionIn, LocationIn, HouseholdIn
+from api.schemas import PriceRegionIn, LocationIn, HouseholdIn
 
 router = APIRouter(prefix="/metadata", tags=["metadata"])
 
 
 # --- Regions ---
 
-@router.post("/regions", response_model=RegionIn)
-async def create_region(region: RegionIn):
-    # Insert region and return the created record in one operation
+@router.post("/price_regions", response_model=PriceRegionIn)
+async def create_region(region: PriceRegionIn):
+    # Insert price region and return the created record in one operation
     query = (
-        insert(db.regions_tbl)
-        .values(name=region.name)
-        .returning(db.regions_tbl.c.region_id, db.regions_tbl.c.name)
+        insert(db.price_regions_tbl)
+        .values(
+            name=region.name,
+            bidding_zone_eic_code=region.bidding_zone_eic_code
+        )
+        .returning(
+            db.price_regions_tbl.c.price_region_id,
+            db.price_regions_tbl.c.name,
+            db.price_regions_tbl.c.bidding_zone_eic_code
+        )
     )
     created_region = await database.fetch_one(query)
 
@@ -26,31 +33,31 @@ async def create_region(region: RegionIn):
         raise HTTPException(status_code=500, detail="Failed to create region")
 
     # Convert database row to response model
-    return RegionIn(region_id=created_region['region_id'], name=created_region['name'])
+    return PriceRegionIn(price_region_id=created_region['price_region_id'], name=created_region['name'], bidding_zone_eic_code=created_region['bidding_zone_eic_code'])
 
 
-@router.get("/regions", response_model=List[RegionIn])
+@router.get("/price_regions", response_model=List[PriceRegionIn])
 async def get_regions(name: str | None = Query(None)):
-    # Filter regions by name if provided
-    query = select(db.regions_tbl)
+    # Filter price regions by name if provided
+    query = select(db.price_regions_tbl)
     if name:
-        query = query.where(db.regions_tbl.c.name == name)
+        query = query.where(db.price_regions_tbl.c.name == name)
 
     regions = await database.fetch_all(query)
 
     # Convert database rows to response models
-    return [RegionIn(region_id=r['region_id'], name=r['name']) for r in regions]
+    return [PriceRegionIn(price_region_id=r['price_region_id'], name=r['name'], bidding_zone_eic_code=r['bidding_zone_eic_code']) for r in regions]
 
 
-@router.get("/regions/{region_id}", response_model=RegionIn)
-async def get_region(region_id: int):
-    query = select(db.regions_tbl).where(db.regions_tbl.c.region_id == region_id)
+@router.get("/price_regions/{price_region_id}", response_model=PriceRegionIn)
+async def get_region(price_region_id: int):
+    query = select(db.price_regions_tbl).where(db.price_regions_tbl.c.price_region_id == price_region_id)
     region = await database.fetch_one(query)
 
     if not region:
         raise HTTPException(status_code=404, detail="Region not found")
 
-    return RegionIn(region_id=region['region_id'], name=region['name'])
+    return PriceRegionIn(price_region_id=region['price_region_id'], name=region['name'], bidding_zone_eic_code=region['bidding_zone_eic_code'])
 
 
 # --- Locations ---
@@ -58,18 +65,18 @@ async def get_region(region_id: int):
 @router.post("/locations", response_model=LocationIn)
 async def create_location(location: LocationIn):
     # Validate that the referenced region exists before creating the location
-    region_query = select(db.regions_tbl).where(db.regions_tbl.c.region_id == location.region_id)
+    region_query = select(db.price_regions_tbl).where(db.price_regions_tbl.c.price_region_id == location.price_region_id)
     region = await database.fetch_one(region_query)
 
     if not region:
         raise HTTPException(
             status_code=404,
-            detail=f"Region with id {location.region_id} not found"
+            detail=f"Price region with id {location.price_region_id} not found"
         )
 
     # Insert location with geographic coordinates and return the created record
     location_data = {
-        "region_id": location.region_id,
+        "price_region_id": location.price_region_id,
         "name": location.name,
         "latitude": location.latitude,
         "longitude": location.longitude
@@ -80,7 +87,7 @@ async def create_location(location: LocationIn):
         .values(**location_data)
         .returning(
             db.locations_tbl.c.location_id,
-            db.locations_tbl.c.region_id,
+            db.locations_tbl.c.price_region_id,
             db.locations_tbl.c.name,
             db.locations_tbl.c.latitude,
             db.locations_tbl.c.longitude
@@ -97,11 +104,11 @@ async def create_location(location: LocationIn):
 
 
 @router.get("/locations", response_model=List[LocationIn])
-async def get_locations(region_id: int | None = Query(None)):
-    # Filter locations by region_id if provided
+async def get_locations(price_region_id: int | None = Query(None)):
+    # Filter locations by price_region_id if provided
     query = select(db.locations_tbl)
-    if region_id:
-        query = query.where(db.locations_tbl.c.region_id == region_id)
+    if price_region_id:
+        query = query.where(db.locations_tbl.c.price_region_id == price_region_id)
 
     locations = await database.fetch_all(query)
 

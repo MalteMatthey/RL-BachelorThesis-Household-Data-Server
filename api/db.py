@@ -11,7 +11,7 @@ engine = sqlalchemy.create_engine(DATABASE_URL)
 metadata = sqlalchemy.MetaData()
 
 # Define variables, they will be populated after reflection in main.py
-regions_tbl = None
+price_regions_tbl = None
 locations_tbl = None
 households_tbl = None
 weather_obs_tbl = None
@@ -23,7 +23,7 @@ price_tbl = None
 
 async def reflect_db_schema():
     """Reflects the database schema and assigns table objects."""
-    global regions_tbl, locations_tbl, households_tbl, weather_obs_tbl, weather_fc_tbl, pv_tbl, load_tbl, price_tbl
+    global price_regions_tbl, locations_tbl, households_tbl, weather_obs_tbl, weather_fc_tbl, pv_tbl, load_tbl, price_tbl
 
     # Perform reflection
     try:
@@ -32,7 +32,7 @@ async def reflect_db_schema():
         print("Reflection successful. Assigning tables...")
 
         # Assign metadata tables first
-        regions_tbl = metadata.tables["regions"]
+        price_regions_tbl = metadata.tables["price_regions"]
         locations_tbl = metadata.tables["locations"]
         households_tbl = metadata.tables["households"]
 

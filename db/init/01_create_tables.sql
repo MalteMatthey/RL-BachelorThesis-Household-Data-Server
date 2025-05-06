@@ -1,16 +1,17 @@
 -- 0) enable TimescaleDB
 CREATE EXTENSION IF NOT EXISTS timescaledb CASCADE;
 
--- 1) Regions (for price assignment)
-CREATE TABLE regions (
-    region_id   SERIAL           PRIMARY KEY,
-    name        TEXT             NOT NULL
+-- 1) price_regions (for price assignment)
+CREATE TABLE price_regions (
+    price_region_id         SERIAL           PRIMARY KEY,
+    name                    TEXT             NOT NULL,
+    bidding_zone_eic_code   TEXT             NOT NULL
 );
 
 -- 2) Locations with geographic coordinates
 CREATE TABLE locations (
     location_id SERIAL           PRIMARY KEY,
-    region_id   INT              NOT NULL REFERENCES regions(region_id),
+    price_region_id   INT        NOT NULL REFERENCES price_regions(price_region_id),
     name        TEXT             NOT NULL,
     latitude    DOUBLE PRECISION NOT NULL,
     longitude   DOUBLE PRECISION NOT NULL
@@ -25,14 +26,14 @@ CREATE TABLE households (
 
 -- 4) Raw prices per region
 CREATE TABLE electricity_prices (
-    time           TIMESTAMPTZ      NOT NULL,
-    region_id      INT              NOT NULL REFERENCES regions(region_id),
-    price_eur_mwh  DOUBLE PRECISION NOT NULL,
-    PRIMARY KEY (time, region_id)
+    time                TIMESTAMPTZ      NOT NULL,
+    price_region_id     INT              NOT NULL REFERENCES price_regions(price_region_id),
+    price_eur_mwh       DOUBLE PRECISION NOT NULL,
+    PRIMARY KEY (time, price_region_id)
 );
 SELECT create_hypertable(
     'electricity_prices', 'time',
-    partitioning_column => 'region_id',
+    partitioning_column => 'price_region_id',
     number_partitions     => 8,
     chunk_time_interval => INTERVAL '1 month'
 );

@@ -20,8 +20,8 @@ async def fetch_timeseries(table: Table, time_column: Column, filters: Dict[str,
 
 
 @router.get("/price")
-async def get_price(region_id: int = Query(...), start: datetime = Query(...), end: datetime = Query(...)):
-    return await fetch_timeseries(db.price_tbl, db.price_tbl.c.time, {"region_id": region_id}, start, end)
+async def get_price(price_region_id: int = Query(...), start: datetime = Query(...), end: datetime = Query(...)):
+    return await fetch_timeseries(db.price_tbl, db.price_tbl.c.time, {"price_region_id": price_region_id}, start, end)
 
 
 @router.get("/pv")
