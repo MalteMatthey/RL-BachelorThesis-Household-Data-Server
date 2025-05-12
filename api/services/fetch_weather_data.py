@@ -55,19 +55,20 @@ ELEMENTS_TO_REQUEST = sorted([
 # --- Constants ---
 _DEFAULT_TIMEOUT_SECONDS = 30.0
 _FORECAST_TIMEOUT_SECONDS = 30.0
-_OBSERVATION_TIMEOUT_SECONDS = 300.0 # Allow longer for potentially large historical pulls
+_OBSERVATION_TIMEOUT_SECONDS = 300.0  # Allow longer for potentially large historical pulls
 _MIN_FORECAST_DATE = datetime(2020, 1, 1, tzinfo=timezone.utc)
 _DATE_FORMAT = "%Y-%m-%d"
 _API_UNIT_GROUP = "metric"
 _API_CONTENT_TYPE = "json"
 _API_INCLUDE_HOURS = "hours"
 
+
 # --- Core API Interaction ---
 
 async def _make_visual_crossing_request(
-    url: str,
-    params: Dict[str, Any],
-    timeout: float = _DEFAULT_TIMEOUT_SECONDS
+        url: str,
+        params: Dict[str, Any],
+        timeout: float = _DEFAULT_TIMEOUT_SECONDS
 ) -> Optional[Dict[str, Any]]:
     """
     Makes a GET request to the Visual Crossing API, checking B2 backup first.
@@ -91,7 +92,7 @@ async def _make_visual_crossing_request(
         backup_data = await b2_handler.get_backup(backup_filename)
         if backup_data:
             print(f"Using cached response from B2 backup: {backup_filename}")
-            return backup_data # Return parsed data from backup
+            return backup_data  # Return parsed data from backup
         else:
             print(f"Failed to retrieve or parse backup {backup_filename}. Proceeding with live API call.")
 
@@ -120,17 +121,18 @@ async def _make_visual_crossing_request(
             print(f"HTTP error {exc.response.status_code} for {exc.request.url!r}: {exc.response.text}")
             return None
         except json.JSONDecodeError as e:
-             print(f"Error decoding JSON from live API response for {url}: {e}")
-             return None
+            print(f"Error decoding JSON from live API response for {url}: {e}")
+            return None
         except Exception as e:
             print(f"An unexpected error occurred during API request/processing: {e}")
             return None
 
+
 # --- Data Processing Helpers ---
 
 def _get_schema_keys_to_process(
-    schema_cls: Type[pydantic.BaseModel],
-    exclude_keys: set[str]
+        schema_cls: Type[pydantic.BaseModel],
+        exclude_keys: set[str]
 ) -> List[str]:
     """
     Gets the list of schema field keys, excluding specified ones.
@@ -146,13 +148,14 @@ def _get_schema_keys_to_process(
         k for k in schema_cls.model_fields.keys() if k not in exclude_keys
     ]
 
+
 def _process_api_response_day_hour(
-    api_data: Optional[Dict[str, Any]],
-    location_id: int,
-    base_record: Dict[str, Any],
-    time_field_name: str, # e.g., 'datetime' or 'target_time'
-    schema_cls: Type[pydantic.BaseModel],
-    exclude_keys: set[str]
+        api_data: Optional[Dict[str, Any]],
+        location_id: int,
+        base_record: Dict[str, Any],
+        time_field_name: str,  # e.g., 'datetime' or 'target_time'
+        schema_cls: Type[pydantic.BaseModel],
+        exclude_keys: set[str]
 ) -> List[Dict[str, Any]]:
     """
     Processes the common day/hour structure from the Visual Crossing API response.
@@ -187,11 +190,12 @@ def _process_api_response_day_hour(
                 try:
                     record[time_field_name] = datetime.fromtimestamp(epoch_timestamp, tz=timezone.utc)
                 except (TypeError, ValueError):
-                    print(f"Warning: Invalid datetimeEpoch '{epoch_timestamp}' for an hour in day {day_datetime_str}. Skipping record.")
-                    continue # Skip record if timestamp is invalid
+                    print(
+                        f"Warning: Invalid datetimeEpoch '{epoch_timestamp}' for an hour in day {day_datetime_str}. Skipping record.")
+                    continue  # Skip record if timestamp is invalid
             else:
                 print(f"Warning: Missing 'datetimeEpoch' for an hour in day {day_datetime_str}. Skipping record.")
-                continue # Skip record if time cannot be determined
+                continue  # Skip record if time cannot be determined
 
             # --- Data Extraction ---
             # Prioritize hourly data, fall back to daily data for missing hourly values
@@ -200,7 +204,7 @@ def _process_api_response_day_hour(
                 if value is None:
                     # Fallback only if hourly value is explicitly None
                     value = day_data.get(key)
-                record[key] = value # Assign value (even if it's None after fallback)
+                record[key] = value  # Assign value (even if it's None after fallback)
 
             processed_records.append(record)
 
@@ -210,7 +214,7 @@ def _process_api_response_day_hour(
 # --- Weather Observation Specific Logic ---
 
 def _build_observation_request_details(
-    lat: float, lon: float, start_dt: datetime, end_dt: datetime
+        lat: float, lon: float, start_dt: datetime, end_dt: datetime
 ) -> Tuple[str, Dict[str, Any]]:
     """
     Builds the URL and parameters for a historical weather observation request.
@@ -224,7 +228,7 @@ def _build_observation_request_details(
     params = {
         "unitGroup": _API_UNIT_GROUP,
         "include": _API_INCLUDE_HOURS,
-        "elements": ",".join(ELEMENTS_TO_REQUEST), # Use the filtered list
+        "elements": ",".join(ELEMENTS_TO_REQUEST),  # Use the filtered list
         "contentType": _API_CONTENT_TYPE
     }
     # print(f"Building observation request: URL={url}, Params={params}")
@@ -232,7 +236,7 @@ def _build_observation_request_details(
 
 
 async def fetch_external_weather_observations(
-    location_id: int, lat: float, lon: float, start: datetime, end: datetime
+        location_id: int, lat: float, lon: float, start: datetime, end: datetime
 ) -> List[Dict[str, Any]]:
     """
     Fetches hourly historical weather observations for a given location and date range.
@@ -260,12 +264,12 @@ async def fetch_external_weather_observations(
 
     # 3. Process Response
     base_record = {'location_id': location_id}
-    exclude_keys = {'location_id', 'datetime'} # These are handled specially
+    exclude_keys = {'location_id', 'datetime'}  # These are handled specially
     processed_data = _process_api_response_day_hour(
         api_data=api_data,
         location_id=location_id,
         base_record=base_record,
-        time_field_name='datetime', # Field name in WeatherObservationIn
+        time_field_name='datetime',  # Field name in WeatherObservationIn
         schema_cls=WeatherObservationIn,
         exclude_keys=exclude_keys
     )
@@ -277,7 +281,7 @@ async def fetch_external_weather_observations(
 # --- Weather Forecast Specific Logic ---
 
 def _build_forecast_request_details(
-    lat: float, lon: float, forecast_basis_date: date
+        lat: float, lon: float, forecast_basis_date: date
 ) -> Tuple[str, Dict[str, Any]]:
     """
     Builds the URL and parameters for a historical weather forecast request
@@ -296,16 +300,16 @@ def _build_forecast_request_details(
     params = {
         "unitGroup": _API_UNIT_GROUP,
         "include": _API_INCLUDE_HOURS,
-        "elements": ",".join(ELEMENTS_TO_REQUEST), # Use the filtered list
+        "elements": ",".join(ELEMENTS_TO_REQUEST),  # Use the filtered list
         "contentType": _API_CONTENT_TYPE,
-        "forecastBasisDate": forecast_basis_date_str # Key parameter for historical forecast
+        "forecastBasisDate": forecast_basis_date_str  # Key parameter for historical forecast
     }
     # print(f"Building forecast request: URL={url}, Params={params}")
     return url, params
 
 
 async def fetch_external_weather_forecasts(
-    location_id: int, lat: float, lon: float, start: datetime, end: datetime
+        location_id: int, lat: float, lon: float, start: datetime, end: datetime
 ) -> List[Dict[str, Any]]:
     """
     Fetches historical HOURLY weather forecasts for a given location and date range,
@@ -329,9 +333,10 @@ async def fetch_external_weather_forecasts(
     end_utc = end.astimezone(timezone.utc) if end.tzinfo else end.replace(tzinfo=timezone.utc)
 
     start_date = start_utc.date()
-    end_date = end_utc.date() # End date is inclusive
+    end_date = end_utc.date()  # End date is inclusive
 
-    print(f"Starting fetch for forecast runs from {start_date} to {end_date} (inclusive) for location {location_id} ({lat},{lon})")
+    print(
+        f"Starting fetch for forecast runs from {start_date} to {end_date} (inclusive) for location {location_id} ({lat},{lon})")
 
     all_aggregated_forecasts: List[Dict[str, Any]] = []
     current_date = start_date
@@ -343,7 +348,8 @@ async def fetch_external_weather_forecasts(
 
         # Check if the basis date is valid (Visual Crossing has data from 2020-01-01)
         if forecast_run_time < _MIN_FORECAST_DATE:
-            print(f"Skipping forecast run for basis date {forecast_basis_date_str}: Date is before {_MIN_FORECAST_DATE.date()}.")
+            print(
+                f"Skipping forecast run for basis date {forecast_basis_date_str}: Date is before {_MIN_FORECAST_DATE.date()}.")
             current_date += timedelta(days=1)
             continue
 
@@ -368,7 +374,7 @@ async def fetch_external_weather_forecasts(
                 api_data=api_data,
                 location_id=location_id,
                 base_record=base_record,
-                time_field_name='target_time', # Field name in WeatherForecastIn
+                time_field_name='target_time',  # Field name in WeatherForecastIn
                 schema_cls=WeatherForecastIn,
                 exclude_keys=exclude_keys
             )
@@ -382,5 +388,6 @@ async def fetch_external_weather_forecasts(
         current_date += timedelta(days=1)
 
     print(f"\n===\nFinished fetching forecasts.")
-    print(f"Total processed forecast records for location {location_id} across all runs: {len(all_aggregated_forecasts)}")
+    print(
+        f"Total processed forecast records for location {location_id} across all runs: {len(all_aggregated_forecasts)}")
     return all_aggregated_forecasts

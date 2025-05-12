@@ -33,7 +33,8 @@ async def create_region(region: PriceRegionIn):
         raise HTTPException(status_code=500, detail="Failed to create region")
 
     # Convert database row to response model
-    return PriceRegionIn(price_region_id=created_region['price_region_id'], name=created_region['name'], bidding_zone_eic_code=created_region['bidding_zone_eic_code'])
+    return PriceRegionIn(price_region_id=created_region['price_region_id'], name=created_region['name'],
+                         bidding_zone_eic_code=created_region['bidding_zone_eic_code'])
 
 
 @router.get("/price_regions", response_model=List[PriceRegionIn])
@@ -46,7 +47,8 @@ async def get_regions(name: str | None = Query(None)):
     regions = await database.fetch_all(query)
 
     # Convert database rows to response models
-    return [PriceRegionIn(price_region_id=r['price_region_id'], name=r['name'], bidding_zone_eic_code=r['bidding_zone_eic_code']) for r in regions]
+    return [PriceRegionIn(price_region_id=r['price_region_id'], name=r['name'],
+                          bidding_zone_eic_code=r['bidding_zone_eic_code']) for r in regions]
 
 
 @router.get("/price_regions/{price_region_id}", response_model=PriceRegionIn)
@@ -57,7 +59,8 @@ async def get_region(price_region_id: int):
     if not region:
         raise HTTPException(status_code=404, detail="Region not found")
 
-    return PriceRegionIn(price_region_id=region['price_region_id'], name=region['name'], bidding_zone_eic_code=region['bidding_zone_eic_code'])
+    return PriceRegionIn(price_region_id=region['price_region_id'], name=region['name'],
+                         bidding_zone_eic_code=region['bidding_zone_eic_code'])
 
 
 # --- Locations ---
@@ -65,7 +68,8 @@ async def get_region(price_region_id: int):
 @router.post("/locations", response_model=LocationIn)
 async def create_location(location: LocationIn):
     # Validate that the referenced region exists before creating the location
-    region_query = select(db.price_regions_tbl).where(db.price_regions_tbl.c.price_region_id == location.price_region_id)
+    region_query = select(db.price_regions_tbl).where(
+        db.price_regions_tbl.c.price_region_id == location.price_region_id)
     region = await database.fetch_one(region_query)
 
     if not region:

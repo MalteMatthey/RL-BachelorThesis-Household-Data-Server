@@ -142,4 +142,3 @@ class WeatherForecastIn(BaseModel):
     dniradiation: Optional[float] = None
     difradiation: Optional[float] = None
     sunelevation: Optional[float] = None
-

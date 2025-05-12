@@ -13,6 +13,10 @@ from entsoe.exceptions import NoMatchingDataError, InvalidPSRTypeError
 from ..schemas import PriceIn
 from .b2_backup import b2_handler
 
+################################################
+### NOT TESTED YET, API KEY NOT RECEIVED YET ###
+################################################
+
 # --- Configuration ---
 ENTSOE_API_KEY = os.getenv("ENTSOE_API_KEY")
 if not ENTSOE_API_KEY:
@@ -30,7 +34,8 @@ _API_DATE_FORMAT = "%Y%m%d%H%M"  # Format for periodStart/periodEnd in ENTSO-E r
 _B2_CONCEPTUAL_URL_PRICES = "entsoe_day_ahead_prices"  # For B2 filename generation
 
 
-async def fetch_external_electricity_prices(price_region_id: int, start: datetime, end: datetime) -> List[Dict[str, Any]]:
+async def fetch_external_electricity_prices(price_region_id: int, start: datetime, end: datetime) -> List[
+    Dict[str, Any]]:
     """
     Fetches day-ahead electricity prices for a given region and date range using ENTSO-E.
     Uses B2 for caching.
@@ -109,7 +114,8 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
                 start=start_ts_brussels,
                 end=end_ts_brussels
             )
-            print(f"Successfully fetched {len(price_data_series) if price_data_series is not None else 0} price points from ENTSO-E.")
+            print(
+                f"Successfully fetched {len(price_data_series) if price_data_series is not None else 0} price points from ENTSO-E.")
 
             # --- Save to B2 ---
             if price_data_series is not None and not price_data_series.empty:

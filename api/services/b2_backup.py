@@ -15,6 +15,7 @@ B2_KEY_ID = os.getenv("B2_KEY_ID")
 B2_APPLICATION_KEY = os.getenv("B2_APPLICATION_KEY")
 B2_BUCKET_NAME = os.getenv("B2_BUCKET_NAME")
 
+
 # --- B2 Handler Class ---
 
 class B2BackupHandler:
@@ -28,9 +29,10 @@ class B2BackupHandler:
     def _initialize_b2(self):
         """Initializes the B2 API connection and gets the bucket object."""
         if not all([B2_KEY_ID, B2_APPLICATION_KEY, B2_BUCKET_NAME]):
-            print("Warning: B2 credentials (B2_KEY_ID, B2_APPLICATION_KEY, B2_BUCKET_NAME) not fully configured. B2 backup disabled.")
+            print(
+                "Warning: B2 credentials (B2_KEY_ID, B2_APPLICATION_KEY, B2_BUCKET_NAME) not fully configured. B2 backup disabled.")
             return
-        
+
         try:
             info = InMemoryAccountInfo()
             self.api = B2Api(info)
@@ -87,10 +89,11 @@ class B2BackupHandler:
         except Exception as e:
             # Check if the error is due to authorization specifically
             if "unauthorized" in str(e).lower():
-                 print(f"Authorization error checking B2 backup for {filename}: {e}. Check B2 key permissions (needs readFiles).")
+                print(
+                    f"Authorization error checking B2 backup for {filename}: {e}. Check B2 key permissions (needs readFiles).")
             else:
-                 print(f"Error checking B2 backup for {filename}: {e}")
-            return None # Treat errors as backup not found
+                print(f"Error checking B2 backup for {filename}: {e}")
+            return None  # Treat errors as backup not found
 
     def _download_b2_file_sync(self, filename: str, download_dest: io.BytesIO):
         """Synchronous helper to download a B2 file into a BytesIO object."""
@@ -104,7 +107,6 @@ class B2BackupHandler:
             print(f"Detailed B2 download error for {filename}: {str(e)}")
             # Wrap other exceptions for clarity
             raise RuntimeError(f"Failed during B2 download of {filename}") from e
-
 
     async def get_backup(self, filename: str) -> Optional[Dict[str, Any]]:
         """Downloads and parses a backup file from B2 using threadpool."""
@@ -120,7 +122,7 @@ class B2BackupHandler:
                 filename,
                 download_dest
             )
-            download_dest.seek(0) # Rewind buffer to read content
+            download_dest.seek(0)  # Rewind buffer to read content
             content = download_dest.read()
             print(f"Successfully downloaded {len(content)} bytes for {filename}")
             # Assume content is JSON
@@ -138,7 +140,6 @@ class B2BackupHandler:
             print(f"Error processing B2 backup {filename}: {e}")
             return None
 
-
     async def save_backup(self, url: str, params: Dict[str, Any], content: bytes):
         """Saves the raw API response content to B2 using threadpool."""
         if not self.is_enabled():
@@ -152,15 +153,17 @@ class B2BackupHandler:
                 self.bucket.upload_bytes,
                 data_bytes=content,
                 file_name=filename,
-                content_type='application/json' # Set appropriate content type
+                content_type='application/json'  # Set appropriate content type
             )
             print(f"Successfully uploaded backup to B2: {filename} (ID: {file_info.id_})")
         except Exception as e:
-             # Check if the error is due to authorization specifically
+            # Check if the error is due to authorization specifically
             if "unauthorized" in str(e).lower():
-                 print(f"Authorization error saving B2 backup {filename}: {e}. Check B2 key permissions (needs writeFiles).")
+                print(
+                    f"Authorization error saving B2 backup {filename}: {e}. Check B2 key permissions (needs writeFiles).")
             else:
                 print(f"Error saving B2 backup {filename}: {e}")
+
 
 # --- Singleton Instance ---
 # Singleton avoids re-initializing the B2 connection repeatedly
