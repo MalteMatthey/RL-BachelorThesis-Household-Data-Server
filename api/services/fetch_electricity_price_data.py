@@ -1,5 +1,5 @@
 import os
-import asyncpg
+import asyncpg  # Keep for type hints if any, or remove if not used after change
 import httpx
 import pandas as pd
 from datetime import datetime, timedelta, timezone
@@ -12,6 +12,8 @@ from entsoe.exceptions import NoMatchingDataError, InvalidPSRTypeError
 
 from ..schemas import PriceIn
 from .b2_backup import b2_handler
+# Import the global database instance from api.db
+from api.db import database as app_db
 
 ################################################
 ### NOT TESTED YET, API KEY NOT RECEIVED YET ###
@@ -25,11 +27,6 @@ if not ENTSOE_API_KEY:
 # fallback if DB lookup fails
 DEFAULT_EIC_CODE = "10YEU-CONT-SYNC"
 
-# Database URL for asyncpg
-DATABASE_URL = os.getenv("DATABASE_URL")
-if not DATABASE_URL:
-    print("Warning: DATABASE_URL env var not set; EIC lookup from DB will fail.")
-
 _API_DATE_FORMAT = "%Y%m%d%H%M"  # Format for periodStart/periodEnd in ENTSO-E raw API
 _B2_CONCEPTUAL_URL_PRICES = "entsoe_day_ahead_prices"  # For B2 filename generation
 
@@ -39,6 +36,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
     """
     Fetches day-ahead electricity prices for a given region and date range using ENTSO-E.
     Uses B2 for caching.
+    Uses the application's shared database connection.
     """
     print(f"Fetching ENTSO-E day-ahead prices for price_region_id {price_region_id} from {start} to {end}")
 
@@ -48,20 +46,20 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
 
     # --- lookup bidding_zone_eic_code in price_regions table ---
     country_code: Optional[str] = None
-    if DATABASE_URL:
+    # Use the global app_db instance
+    if app_db.is_connected:  # Check if the global instance is connected
         try:
-            conn = await asyncpg.connect(DATABASE_URL)
-            row = await conn.fetchrow(
-                "SELECT bidding_zone_eic_code FROM price_regions WHERE price_region_id = $1",
-                price_region_id
-            )
-            await conn.close()
+            query = "SELECT bidding_zone_eic_code FROM price_regions WHERE price_region_id = :price_region_id"
+            # The `databases` library uses :param_name style for placeholders
+            row = await app_db.fetch_one(query=query, values={"price_region_id": price_region_id})
             if row:
                 country_code = row["bidding_zone_eic_code"]
             else:
                 print(f"Warning: no DB entry in price_regions for id {price_region_id}")
         except Exception as e:
-            print(f"Error querying price_regions for id {price_region_id}: {e}")
+            print(f"Error querying price_regions for id {price_region_id} using app_db: {e}")
+    else:
+        print("Warning: app_db (api.db.database) is not connected. Cannot look up EIC code.")
 
     if not country_code:
         print(f"Using DEFAULT_EIC_CODE fallback for price_region_id {price_region_id}")
