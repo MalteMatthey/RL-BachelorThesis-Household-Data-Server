@@ -96,6 +96,10 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
             try:
                 if isinstance(cached_data_json_str, list):
                     print(f"Successfully loaded {len(cached_data_json_str)} records from B2 cache.")
+                    # Convert 'time' from str to datetime if needed
+                    for record in cached_data_json_str:
+                        if isinstance(record.get("time"), str):
+                            record["time"] = datetime.fromisoformat(record["time"])
                     return cached_data_json_str
             except json.JSONDecodeError as e:
                 print(f"Error decoding JSON from B2 backup {backup_filename}: {e}. Fetching live data.")
