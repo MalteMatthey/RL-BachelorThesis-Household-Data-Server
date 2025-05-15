@@ -9,3 +9,7 @@ httpx>=0.20
 b2sdk>=2.0.0
 entsoe-py
 pandas
+pytest
+pytest-asyncio
+pytest-mock
+types-requests

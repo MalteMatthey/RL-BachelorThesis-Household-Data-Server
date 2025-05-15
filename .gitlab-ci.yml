@@ -1,0 +1,78 @@
+stages:
+  - test
+  - mr
+
+test:
+  tags:
+    - home-server
+  stage: test
+  image: docker:24.0.9
+  services: []
+  before_script:
+    - unset DOCKER_HOS    
+    - echo "TUNNEL_TOKEN=$TUNNEL_TOKEN" > stack.env
+    - echo "API_KEY=$API_KEY" >> stack.env
+    - echo "POSTGRES_USER=$POSTGRES_USER" >> stack.env
+    - echo "POSTGRES_PASSWORD=$POSTGRES_PASSWORD" >> stack.env
+    - echo "POSTGRES_DB=$POSTGRES_DB" >> stack.env
+    - echo "DATABASE_URL=$DATABASE_URL" >> stack.env
+    - echo "VISUAL_CROSSING_API_KEY=$VISUAL_CROSSING_API_KEY" >> stack.env
+    - echo "ENTSOE_API_KEY=$ENTSOE_API_KEY" >> stack.env
+    - echo "B2_KEY_ID=$B2_KEY_ID" >> stack.env
+    - echo "B2_APPLICATION_KEY=$B2_APPLICATION_KEY" >> stack.env
+    - echo "B2_BUCKET_NAME=$B2_BUCKET_NAME" >> stack.env
+    # Ensure a clean environment by removing old containers and volumes
+    - docker compose down --volumes
+    # Adjust host port mappings to avoid conflicts
+    - sed -i -E '/^  db:/,/^[^[:space:]]/{s~^([[:space:]]*- ")5432(:5432")~\115432\2~}' docker-compose.yml
+    - sed -i -E '/^  fastapi:/,/^[^[:space:]]/{s~^([[:space:]]*- ")8021(:8021")~\118021\2~}' docker-compose.yml
+    # Force rebuild of containers
+    - docker compose build --no-cache fastapi
+    # Bring up database and API containers
+    - docker compose up -d db fastapi
+    - |
+      until docker compose exec db pg_isready -U $POSTGRES_USER -d $POSTGRES_DB; do
+        echo "Waiting for DB inside container..."; sleep 2;
+      done
+    - |
+      echo "Waiting for FastAPI service to be ready..."
+      timeout=120
+      until docker compose exec fastapi curl --output /dev/null --silent --head --fail http://localhost:8021/docs; do
+        sleep 5
+        timeout=$((timeout - 5))
+        if [ $timeout -le 0 ]; then
+          echo "FastAPI service did not become ready in time."
+          docker compose logs fastapi
+          exit 1
+        fi
+        printf '.'
+      done
+      echo "FastAPI service is ready."
+  script:
+    - docker compose exec -e PYTHONPATH=/app fastapi pytest -v tests/
+  after_script:
+    - docker compose down --volumes --remove-orphans
+  only:
+    - dev
+    - cicd
+  when: always
+
+
+create_mr:
+  stage: mr
+  image: curlimages/curl:8.4.0
+  script:
+    - |
+      curl --silent --show-error --request POST \
+           --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
+           --form "source_branch=dev" \
+           --form "target_branch=main" \
+           --form "title=Automated: merge dev → main" \
+           "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests"
+    - |
+      if [ $? -ne 0 ]; then
+        echo "MR creation failed (exit code: $?) or MR may already exist."
+      fi
+  only:
+    - dev
+  when: on_success
