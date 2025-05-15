@@ -5,11 +5,11 @@ import pytest
 # Test data for price region
 PRICE_REGION_PAYLOAD_ALPHA = {
     "name": "Test Region Alpha",
-    "bidding_zone_eic_code": "10Y1001A1001A016"
+    "bidding_zone_eic_code": "10Y1001A1001A82H"
 }
 PRICE_REGION_PAYLOAD_BETA = {
     "name": "Test Region Beta",
-    "bidding_zone_eic_code": "10Y1001A1001A016"
+    "bidding_zone_eic_code": "10Y1001A1001A82H"
 }
 
 # Store the ID of the created price regions for use in other tests

@@ -28,7 +28,7 @@ EXPECTED_PV_RESPONSE = {
     "inserted_pv": 3,
     "fetched_weather_obs": 48,
     "fetched_weather_fc": 384,
-    "fetched_prices": 0, # TODO ADJUST AFTER GETTING THE PRICES API KEY
+    "fetched_prices": 20,
     "detail": "Pv data ingested. Related data fetched for overlapping time period if applicable."
 }
 
