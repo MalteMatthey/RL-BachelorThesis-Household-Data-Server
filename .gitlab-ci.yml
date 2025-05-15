@@ -60,16 +60,19 @@ test:
 
 create_mr:
   stage: mr
-  image: curlimages/curl:8.4
+  image: curlimages/curl:8.4.0
   script:
-    - >
-      curl --request POST
-           --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN"
+    - |
+      curl --silent --show-error --request POST \
+           --header "PRIVATE-TOKEN: $GITLAB_API_TOKEN" \
+           --form "source_branch=dev" \
+           --form "target_branch=main" \
+           --form "title=Automated: merge dev → main" \
            "$CI_API_V4_URL/projects/$CI_PROJECT_ID/merge_requests"
-           --form "source_branch=dev"
-           --form "target_branch=main"
-           --form "title=Automated: merge dev → main"
-      || echo "MR may already exist"
+    - |
+      if [ $? -ne 0 ]; then
+        echo "MR creation failed (exit code: $?) or MR may already exist."
+      fi
   only:
     - dev
   when: on_success
