@@ -34,7 +34,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="Data Ingestion and Retrieval API",
+    title="Household Data API",
     lifespan=lifespan
 )
 

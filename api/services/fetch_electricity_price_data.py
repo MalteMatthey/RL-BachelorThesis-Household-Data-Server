@@ -107,7 +107,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
         print(f"Making live API request to ENTSO-E for {country_code} from {start_ts_brussels} to {end_ts_brussels}")
         try:
             client = EntsoePandasClient(api_key=ENTSOE_API_KEY)
-            price_data_series = await client.query_day_ahead_prices(
+            price_data_series = client.query_day_ahead_prices(
                 country_code=country_code,
                 start=start_ts_brussels,
                 end=end_ts_brussels
