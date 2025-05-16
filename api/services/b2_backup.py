@@ -7,7 +7,7 @@ from urllib.parse import urlencode
 
 from fastapi.concurrency import run_in_threadpool
 
-from b2sdk.v2 import B2Api, InMemoryAccountInfo, DownloadVersion
+from b2sdk.v2 import B2Api, InMemoryAccountInfo
 from b2sdk.v2.exception import FileNotPresent, NonExistentBucket
 
 # --- Configuration ---
@@ -153,7 +153,7 @@ class B2BackupHandler:
                 self.bucket.upload_bytes,
                 data_bytes=content,
                 file_name=filename,
-                content_type='application/json'  # Set appropriate content type
+                content_type='application/octet-stream'  # Store raw bytes
             )
             print(f"Successfully uploaded backup to B2: {filename} (ID: {file_info.id_})")
         except Exception as e:
@@ -163,6 +163,30 @@ class B2BackupHandler:
                     f"Authorization error saving B2 backup {filename}: {e}. Check B2 key permissions (needs writeFiles).")
             else:
                 print(f"Error saving B2 backup {filename}: {e}")
+
+    async def get_backup_bytes(self, filename: str) -> Optional[bytes]:
+        """Downloads raw backup bytes from B2 using threadpool."""
+        if not self.is_enabled():
+            return None
+
+        print(f"Attempting to download raw backup from B2: {filename}")
+        try:
+            download_dest = io.BytesIO()
+            await run_in_threadpool(
+                self._download_b2_file_sync,
+                filename,
+                download_dest
+            )
+            download_dest.seek(0)
+            content = download_dest.read()
+            print(f"Successfully downloaded raw backup {filename} ({len(content)} bytes)")
+            return content
+        except FileNotPresent:
+            print(f"Error: Backup file {filename} not found during raw download.")
+            return None
+        except Exception as e:
+            print(f"Error downloading raw backup {filename}: {e}")
+            return None
 
 
 # --- Singleton Instance ---

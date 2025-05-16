@@ -19,9 +19,10 @@ CREATE TABLE locations (
 
 -- 3) Households in a location
 CREATE TABLE households (
-    household_id SERIAL           PRIMARY KEY,
-    location_id  INT              NOT NULL REFERENCES locations(location_id),
-    name         TEXT             NOT NULL
+    household_id            SERIAL PRIMARY KEY,
+    location_id             INT    NOT NULL REFERENCES locations(location_id),
+    name                    TEXT   NOT NULL,
+    enduser_price_formula   TEXT   NOT NULL
 );
 
 -- 4) Raw prices per region

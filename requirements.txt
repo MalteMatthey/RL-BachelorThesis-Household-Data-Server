@@ -13,3 +13,4 @@ pytest
 pytest-asyncio
 pytest-mock
 types-requests
+simpleeval
