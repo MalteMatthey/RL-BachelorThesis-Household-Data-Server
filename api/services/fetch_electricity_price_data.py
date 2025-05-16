@@ -147,7 +147,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
             print(f"No matching data found on ENTSO-E for {country_code} in the period.")
             price_data_series = pd.Series(dtype=float)
         except InvalidPSRTypeError:
-            print(f"Invalid PSRType for ENTSO-E query (though not directly used here).")
+            print("Invalid PSRType for ENTSO-E query (though not directly used here).")
             price_data_series = pd.Series(dtype=float)
         except httpx.HTTPStatusError as e:
             print(f"HTTP error from ENTSO-E API: {e.response.status_code} - {e.response.text}")

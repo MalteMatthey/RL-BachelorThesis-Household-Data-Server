@@ -335,7 +335,8 @@ def test_create_household_with_non_existent_location(http_client, base_url):
     non_existent_location_id = 999996
     payload = {
         "location_id": non_existent_location_id,
-        "name": "HouseholdWithInvalidLocation"
+        "name": "HouseholdWithInvalidLocation",
+        "enduser_price_formula": "price * 1.0"
     }
     url = f"{base_url}/metadata/households"
     response = http_client.post(url, json=payload)
