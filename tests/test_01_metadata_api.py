@@ -38,11 +38,13 @@ created_location_id_2 = None
 # Households will be created under the locations created above
 HOUSEHOLD_PAYLOAD_1 = {
     # location_id will be set dynamically
-    "name": "Household1Loc1"
+    "name": "Household1Loc1",
+    "enduser_price_formula": "price * 1.19 + 0.5"
 }
 HOUSEHOLD_PAYLOAD_2 = {
     # location_id will be set dynamically
-    "name": "Household1Loc2"  # Corresponds to Loc2InRegionBeta
+    "name": "Household1Loc2",
+    "enduser_price_formula": "price * 1.1"
 }
 
 created_household_id_1 = None
@@ -308,6 +310,7 @@ def test_create_household_1(http_client, base_url):
     response_data = response.json()
     assert response_data["name"] == HOUSEHOLD_PAYLOAD_1["name"]
     assert response_data["location_id"] == HOUSEHOLD_PAYLOAD_1["location_id"]
+    assert response_data.get("enduser_price_formula") == HOUSEHOLD_PAYLOAD_1["enduser_price_formula"]
     assert "household_id" in response_data
     created_household_id_1 = response_data["household_id"]
 
@@ -323,6 +326,7 @@ def test_create_household_2(http_client, base_url):
     response_data = response.json()
     assert response_data["name"] == HOUSEHOLD_PAYLOAD_2["name"]
     assert response_data["location_id"] == HOUSEHOLD_PAYLOAD_2["location_id"]
+    assert response_data.get("enduser_price_formula") == HOUSEHOLD_PAYLOAD_2["enduser_price_formula"]
     assert "household_id" in response_data
     created_household_id_2 = response_data["household_id"]
 
@@ -331,11 +335,28 @@ def test_create_household_with_non_existent_location(http_client, base_url):
     non_existent_location_id = 999996
     payload = {
         "location_id": non_existent_location_id,
-        "name": "HouseholdWithInvalidLocation"
+        "name": "HouseholdWithInvalidLocation",
+        "enduser_price_formula": "price * 1.0"
     }
     url = f"{base_url}/metadata/households"
     response = http_client.post(url, json=payload)
     assert response.status_code == 404 # As per API definition
+
+def test_create_household_with_invalid_formula(http_client, base_url):
+    """Test creating a household with an invalid enduser_price_formula."""
+    assert created_location_id_1 is not None, "Location 1 must be created first"
+    
+    # Invalid formula using an undefined variable 'x'
+    payload_invalid_variable = {
+        "location_id": created_location_id_1,
+        "name": "HouseholdWithInvalidFormulaVar",
+        "enduser_price_formula": "price * x + 0.5" 
+    }
+    url = f"{base_url}/metadata/households"
+    response = http_client.post(url, json=payload_invalid_variable)
+    assert response.status_code == 400
+    assert "Invalid formula" in response.json()["detail"]
+
 
 def test_get_specific_household_1(http_client, base_url):
     """Test retrieving a specific household by its ID (Household 1)."""

@@ -75,6 +75,7 @@ class PriceIn(BaseModel):
     time: datetime
     price_region_id: int
     price_eur_mwh: float
+    calculated_price_eur_mwh: Optional[float] = None
 
 
 class PriceRegionIn(BaseModel):
@@ -95,6 +96,7 @@ class HouseholdIn(BaseModel):
     household_id: Optional[int] = None
     location_id: int
     name: str
+    enduser_price_formula: str
 
 
 class WeatherForecastIn(BaseModel):
