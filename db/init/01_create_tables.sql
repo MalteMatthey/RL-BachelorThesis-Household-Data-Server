@@ -19,16 +19,17 @@ CREATE TABLE locations (
 
 -- 3) Households in a location
 CREATE TABLE households (
-    household_id SERIAL           PRIMARY KEY,
-    location_id  INT              NOT NULL REFERENCES locations(location_id),
-    name         TEXT             NOT NULL
+    household_id            SERIAL PRIMARY KEY,
+    location_id             INT    NOT NULL REFERENCES locations(location_id),
+    enduser_price_formula   TEXT   NOT NULL,
+    name                    TEXT   NOT NULL
 );
 
 -- 4) Raw prices per region
 CREATE TABLE electricity_prices (
     time                TIMESTAMPTZ      NOT NULL,
     price_region_id     INT              NOT NULL REFERENCES price_regions(price_region_id),
-    price_eur_mwh       DOUBLE PRECISION NOT NULL,
+    price_eur_kwh       DOUBLE PRECISION NOT NULL,
     PRIMARY KEY (time, price_region_id)
 );
 SELECT create_hypertable(

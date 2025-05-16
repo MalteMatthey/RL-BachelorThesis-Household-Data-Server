@@ -34,6 +34,23 @@ def test_get_price_timeseries(http_client, base_url):
     assert data == expected
 
 
+def test_get_price_timeseries_by_household(http_client, base_url):
+    """Test getting price timeseries for a specific household and applying formula."""
+    # discover a household
+    resp = http_client.get(f"{base_url}/metadata/households")
+    assert resp.status_code == 200
+    hhs = resp.json()
+    assert isinstance(hhs, list) and hhs
+    hid = hhs[0]["household_id"]
+    # use broad time window
+    url = f"{base_url}/timeseries/price?household_id={hid}&start={START_TIMESTAMP}&end={END_TIMESTAMP}"
+    response = http_client.get(url)
+    assert response.status_code == 200
+    data = response.json()
+    expected = load_expected('prices_timeseries_by_household.json')
+    assert data == expected
+
+
 def test_get_weather_obs_timeseries(http_client, base_url):
     """Test getting weather observation timeseries."""
     # discover a location

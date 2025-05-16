@@ -127,7 +127,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
                     processed_records_for_b2.append({
                         "time": record_time_utc.isoformat(),
                         "price_region_id": price_region_id,
-                        "price_eur_mwh": float(price) if pd.notna(price) else None
+                        "price_eur_kwh": float(price) if pd.notna(price) else None
                     })
 
                 content_bytes = json.dumps(processed_records_for_b2).encode('utf-8')
@@ -173,7 +173,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
                 processed_records.append({
                     "time": record_time_utc,
                     "price_region_id": price_region_id,
-                    "price_eur_mwh": float(price)
+                    "price_eur_kwh": float(price)
                 })
         print(f"Processed {len(processed_records)} price records for price_region_id {price_region_id}.")
     elif price_data_series is not None and price_data_series.empty:
