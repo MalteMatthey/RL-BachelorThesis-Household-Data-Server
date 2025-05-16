@@ -8,6 +8,8 @@ test:
   stage: test
   image: docker:24.0.9
   services: []
+  variables:
+    COMPOSE_PROJECT_NAME: "${CI_PROJECT_NAME}_${CI_PIPELINE_ID}"
   before_script:
     - unset DOCKER_HOS    
     - echo "TUNNEL_TOKEN=$TUNNEL_TOKEN" > stack.env
@@ -26,7 +28,11 @@ test:
     # Adjust host port mappings to avoid conflicts
     - sed -i -E '/^  db:/,/^[^[:space:]]/{s~^([[:space:]]*- ")5432(:5432")~\115432\2~}' docker-compose.yml
     - sed -i -E '/^  fastapi:/,/^[^[:space:]]/{s~^([[:space:]]*- ")8021(:8021")~\118021\2~}' docker-compose.yml
+    # Remove host port mappings to avoid port conflicts in CI
+    - sed -i '/"5432:5432"/d' docker-compose.yml
+    - sed -i '/"8021:8021"/d' docker-compose.yml
     # Force rebuild of containers
+    - docker compose build --no-cache db
     - docker compose build --no-cache fastapi
     # Bring up database and API containers
     - docker compose up -d db fastapi
@@ -51,7 +57,15 @@ test:
   script:
     - docker compose exec -e PYTHONPATH=/app fastapi pytest -v tests/
   after_script:
+    - docker compose logs fastapi > fastapi_container.log
+    - docker compose logs db >> db_container.log
     - docker compose down --volumes --remove-orphans
+  artifacts:
+    paths:
+      - fastapi_container.log
+      - db_container.log
+    when: always
+    expire_in: 1 week
   only:
     - dev
     - cicd

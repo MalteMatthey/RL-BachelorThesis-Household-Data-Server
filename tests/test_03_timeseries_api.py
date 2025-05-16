@@ -25,7 +25,7 @@ def test_get_price_timeseries(http_client, base_url):
     assert resp.status_code == 200
     regions = resp.json()
     assert isinstance(regions, list) and regions, "No price regions available"
-    region_id = regions[0]["price_region_id"]
+    region_id = regions[1]["price_region_id"] # The second region has been used before and already has data
     url = f"{base_url}/timeseries/price?price_region_id={region_id}&start={START_TIMESTAMP}&end={END_TIMESTAMP}"
     response = http_client.get(url)
     assert response.status_code == 200
@@ -101,8 +101,6 @@ def test_get_load_timeseries(http_client, base_url):
     payload["data"] = [item.copy() for item in LOAD_DATA_PAYLOAD["data"]]
     for rec in payload["data"]:
         rec["household_id"] = household_id
-        # Normalize timestamp format for comparison with response body
-        rec["time"] = rec["time"].replace("Z", "+00:00")
         
     url = f"{base_url}/timeseries/load?household_id={household_id}&start={original_start_time}&end={original_end_time}"
     response = http_client.get(url)
@@ -130,8 +128,6 @@ def test_get_pv_timeseries(http_client, base_url):
     payload["data"] = [item.copy() for item in PV_GENERATION_PAYLOAD["data"]]
     for rec in payload["data"]:
         rec["household_id"] = household_id
-        # Normalize timestamp format for comparison with response body
-        rec["time"] = rec["time"].replace("Z", "+00:00")
         
     url = f"{base_url}/timeseries/pv?household_id={household_id}&start={original_start_time}&end={original_end_time}"
     response = http_client.get(url)

@@ -21,7 +21,7 @@ async def fetch_timeseries(table: Table, time_column: Column, filters: Dict[str,
     return await database.fetch_all(query)
 
 
-@router.get("/price", response_model=list[PriceIn])
+@router.get("/price", response_model=list[PriceIn], response_model_exclude_none=True)
 async def get_price(
     price_region_id: int | None = Query(None),
     household_id: int | None = Query(None),
@@ -102,14 +102,16 @@ async def _get_calculated_household_prices(household_id: int, start: datetime, e
     for record in raw_price_records:
         calculated_value = calculate_price_with_formula(
             household.enduser_price_formula,
-            record.price_eur_kwh
+            record.price_eur_mwh
         )
+        # Round the calculated price to 2 decimal places
+        calculated_value = round(calculated_value, 2)
         processed_prices.append(
             PriceIn(
                 time=record.time,
                 price_region_id=record.price_region_id,
-                price_eur_kwh=record.price_eur_kwh,
-                calculated_price_eur_kwh=calculated_value
+                price_eur_mwh=record.price_eur_mwh,
+                calculated_price_eur_mwh=calculated_value
             )
         )
     return processed_prices

@@ -74,8 +74,8 @@ class BulkLoad(BaseModel):
 class PriceIn(BaseModel):
     time: datetime
     price_region_id: int
-    price_eur_kwh: float
-    calculated_price_eur_kwh: Optional[float] = None
+    price_eur_mwh: float
+    calculated_price_eur_mwh: Optional[float] = None
 
 
 class PriceRegionIn(BaseModel):

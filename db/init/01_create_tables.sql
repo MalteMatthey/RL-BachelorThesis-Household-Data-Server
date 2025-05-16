@@ -29,7 +29,7 @@ CREATE TABLE households (
 CREATE TABLE electricity_prices (
     time                TIMESTAMPTZ      NOT NULL,
     price_region_id     INT              NOT NULL REFERENCES price_regions(price_region_id),
-    price_eur_kwh       DOUBLE PRECISION NOT NULL,
+    price_eur_mwh       DOUBLE PRECISION NOT NULL,
     PRIMARY KEY (time, price_region_id)
 );
 SELECT create_hypertable(

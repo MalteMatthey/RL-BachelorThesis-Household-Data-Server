@@ -6,6 +6,7 @@ from sqlalchemy import select, insert
 import api.db as db
 from api.db import database
 from api.schemas import PriceRegionIn, LocationIn, HouseholdIn
+from api.helpers.formula_calculator import verify_formula
 
 router = APIRouter(prefix="/metadata", tags=["metadata"])
 
@@ -143,6 +144,13 @@ async def create_household(household: HouseholdIn):
         raise HTTPException(
             status_code=404,
             detail=f"Location with id {household.location_id} not found"
+        )
+
+    # Verify the enduser_price_formula
+    if household.enduser_price_formula and not verify_formula(household.enduser_price_formula):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid formula: {household.enduser_price_formula}"
         )
 
     # Insert household and return the created record

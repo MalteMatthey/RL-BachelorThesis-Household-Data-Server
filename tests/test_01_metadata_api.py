@@ -342,6 +342,22 @@ def test_create_household_with_non_existent_location(http_client, base_url):
     response = http_client.post(url, json=payload)
     assert response.status_code == 404 # As per API definition
 
+def test_create_household_with_invalid_formula(http_client, base_url):
+    """Test creating a household with an invalid enduser_price_formula."""
+    assert created_location_id_1 is not None, "Location 1 must be created first"
+    
+    # Invalid formula using an undefined variable 'x'
+    payload_invalid_variable = {
+        "location_id": created_location_id_1,
+        "name": "HouseholdWithInvalidFormulaVar",
+        "enduser_price_formula": "price * x + 0.5" 
+    }
+    url = f"{base_url}/metadata/households"
+    response = http_client.post(url, json=payload_invalid_variable)
+    assert response.status_code == 400
+    assert "Invalid formula" in response.json()["detail"]
+
+
 def test_get_specific_household_1(http_client, base_url):
     """Test retrieving a specific household by its ID (Household 1)."""
     assert created_household_id_1 is not None, "Household 1 must be created first"

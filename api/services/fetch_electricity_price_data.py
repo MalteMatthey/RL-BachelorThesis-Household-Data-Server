@@ -1,23 +1,15 @@
 import os
-import asyncpg  # Keep for type hints if any, or remove if not used after change
 import httpx
 import pandas as pd
-from datetime import datetime, timedelta, timezone
+import xml.etree.ElementTree as ET
+from pydantic import ValidationError
+from datetime import datetime, timezone, timedelta
 from typing import List, Dict, Any, Optional
-import json
-import requests
-
-from entsoe import EntsoePandasClient
-from entsoe.exceptions import NoMatchingDataError, InvalidPSRTypeError
 
 from ..schemas import PriceIn
 from .b2_backup import b2_handler
 # Import the global database instance from api.db
 from api.db import database as app_db
-
-################################################
-### NOT TESTED YET, API KEY NOT RECEIVED YET ###
-################################################
 
 # --- Configuration ---
 ENTSOE_API_KEY = os.getenv("ENTSOE_API_KEY")
@@ -31,12 +23,10 @@ _API_DATE_FORMAT = "%Y%m%d%H%M"  # Format for periodStart/periodEnd in ENTSO-E r
 _B2_CONCEPTUAL_URL_PRICES = "entsoe_day_ahead_prices"  # For B2 filename generation
 
 
-async def fetch_external_electricity_prices(price_region_id: int, start: datetime, end: datetime) -> List[
-    Dict[str, Any]]:
+async def fetch_external_electricity_prices(price_region_id: int, start: datetime, end: datetime) -> List[Dict[str, Any]]:
     """
     Fetches day-ahead electricity prices for a given region and date range using ENTSO-E.
-    Uses B2 for caching.
-    Uses the application's shared database connection.
+    Uses B2 for caching raw API XML responses and supports pagination via offset.
     """
     print(f"Fetching ENTSO-E day-ahead prices for price_region_id {price_region_id} from {start} to {end}")
 
@@ -65,7 +55,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
         print(f"Using DEFAULT_EIC_CODE fallback for price_region_id {price_region_id}")
         country_code = DEFAULT_EIC_CODE
 
-    # Ensure start and end are timezone-aware (UTC for internal consistency, convert to Brussels for API)
+    # Ensure start and end are timezone-aware (UTC) and convert to Brussels for API consistency
     start_utc = start.astimezone(timezone.utc) if start.tzinfo else start.replace(tzinfo=timezone.utc)
     end_utc = end.astimezone(timezone.utc) if end.tzinfo else end.replace(tzinfo=timezone.utc)
 
@@ -78,107 +68,113 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
         print(f"Error converting datetimes to Pandas Timestamps with Brussels timezone: {e}")
         return []
 
-    # --- B2 Backup Check ---
-    # Parameters for B2 filename should be stable and reflect the query
-    b2_params = {
-        "country_code": country_code,
-        "start_datetime": start_ts_brussels.strftime(_API_DATE_FORMAT),
-        "end_datetime": end_ts_brussels.strftime(_API_DATE_FORMAT)
-    }
-    backup_filename = await b2_handler.check_backup(_B2_CONCEPTUAL_URL_PRICES, b2_params)
-
-    price_data_series: Optional[pd.Series] = None
-
-    if backup_filename:
-        print(f"Backup found for ENTSO-E prices: {backup_filename}")
-        cached_data_json_str = await b2_handler.get_backup(backup_filename)
-        if cached_data_json_str:
-            try:
-                if isinstance(cached_data_json_str, list):
-                    print(f"Successfully loaded {len(cached_data_json_str)} records from B2 cache.")
-                    # Convert 'time' from str to datetime if needed
-                    for record in cached_data_json_str:
-                        if isinstance(record.get("time"), str):
-                            record["time"] = datetime.fromisoformat(record["time"])
-                    return cached_data_json_str
-            except json.JSONDecodeError as e:
-                print(f"Error decoding JSON from B2 backup {backup_filename}: {e}. Fetching live data.")
-            except Exception as e:
-                print(f"Error processing B2 backup {backup_filename}: {e}. Fetching live data.")
-
-    # --- Live API Call ---
-    if price_data_series is None:
-        print(f"Making live API request to ENTSO-E for {country_code} from {start_ts_brussels} to {end_ts_brussels}")
+    # paginate through raw ENTSO-E XML (100 TimeSeries per page) using offset
+    API_URL = "https://web-api.tp.entsoe.eu/api"
+    offset = 0
+    raw_records: List[Dict[str, Any]] = []
+    while True:
+        params = {
+            "documentType": "A44",
+            "periodStart": start_ts_brussels.strftime(_API_DATE_FORMAT),
+            "periodEnd": end_ts_brussels.strftime(_API_DATE_FORMAT),
+            "out_Domain": country_code,
+            "in_Domain": country_code,
+            "contract_MarketAgreement.type": "A01",
+            "classificationSequence_AttributeInstanceComponent.position": "1",
+            "offset": str(offset)
+        }
+        raw = await _make_entsoe_request(API_URL, params)
+        # if API/backup returns nothing, end loop
+        if not raw:
+            print("Warning: empty response from ENTSO-E API or cache")
+            break
         try:
-            client = EntsoePandasClient(api_key=ENTSOE_API_KEY)
-            price_data_series = client.query_day_ahead_prices(
-                country_code=country_code,
-                start=start_ts_brussels,
-                end=end_ts_brussels
-            )
-            print(
-                f"Successfully fetched {len(price_data_series) if price_data_series is not None else 0} price points from ENTSO-E.")
-
-            # --- Save to B2 ---
-            if price_data_series is not None and not price_data_series.empty:
-                processed_records_for_b2 = []
-                for ts, price in price_data_series.items():
-                    record_time_utc = pd.Timestamp(ts).tz_convert('UTC').to_pydatetime()
-                    processed_records_for_b2.append({
-                        "time": record_time_utc.isoformat(),
-                        "price_region_id": price_region_id,
-                        "price_eur_kwh": float(price) if pd.notna(price) else None
-                    })
-
-                content_bytes = json.dumps(processed_records_for_b2).encode('utf-8')
-                await b2_handler.save_backup(_B2_CONCEPTUAL_URL_PRICES, b2_params, content_bytes)
-            elif price_data_series is not None and price_data_series.empty:
-                print("ENTSO-E returned an empty series, nothing to save to B2.")
-            else:
-                print("No data received from ENTSO-E, nothing to save to B2.")
-
-        except requests.exceptions.HTTPError as e:
-            if e.response.status_code == 401:
-                print(f"Authentication failed: Invalid ENTSOE_API_KEY ('{ENTSOE_API_KEY}' is not a valid API key)")
-            else:
-                print(f"HTTP error from ENTSO-E API: {e.response.status_code} - {e.response.text}")
-            price_data_series = pd.Series(dtype=float)
-        except NoMatchingDataError:
-            print(f"No matching data found on ENTSO-E for {country_code} in the period.")
-            price_data_series = pd.Series(dtype=float)
-        except InvalidPSRTypeError:
-            print("Invalid PSRType for ENTSO-E query (though not directly used here).")
-            price_data_series = pd.Series(dtype=float)
-        except httpx.HTTPStatusError as e:
-            print(f"HTTP error from ENTSO-E API: {e.response.status_code} - {e.response.text}")
-            price_data_series = pd.Series(dtype=float)
-        except httpx.RequestError as e:
-            print(f"Network request error connecting to ENTSO-E: {e}")
-            price_data_series = pd.Series(dtype=float)
-        except ValueError as e:
-            print(f"Invalid country code '{country_code}' for ENTSO-E API: {e}")
-            price_data_series = pd.Series(dtype=float)
+            root = ET.fromstring(raw)
         except Exception as e:
-            print(f"An unexpected error occurred during ENTSO-E data fetch: {e}")
-            import traceback
-            traceback.print_exc()
-            price_data_series = pd.Series(dtype=float)
+            print(f"Error parsing ENTSO-E XML: {e}")
+            break
+        # support namespaced XML: match any namespace for TimeSeries elements
+        series = root.findall(".//{*}TimeSeries")
+        if not series:
+            print(f"Warning: no TimeSeries elements (with namespace) in ENTSO-E response (first 200 bytes): {raw[:200]!r}")
+            break
+        page_records: List[Dict[str, Any]] = []
+        for ts in series:
+            # use wildcard namespace on nested elements
+            period = ts.find("{*}Period")
+            interval = period.find("{*}timeInterval")
+            start_iso = interval.find("{*}start").text
+            resolution = period.find("{*}resolution").text
+            try:
+                base_dt = datetime.fromisoformat(start_iso.replace("Z", "+00:00"))
+            except ValueError:
+                continue
+            if resolution.startswith("PT") and resolution.endswith("M"):
+                step = timedelta(minutes=int(resolution[2:-1]))
+            elif resolution.startswith("PT") and resolution.endswith("H"):
+                step = timedelta(hours=int(resolution[2:-1]))
+            else:
+                step = timedelta()
+            for pt in period.findall("{*}Point"):
+                pos = int(pt.find("{*}position").text)
+                price = pt.find("{*}price.amount").text
+                try:
+                    val = float(price)
+                except ValueError:
+                    continue
+                ts_point = (base_dt + (pos - 1) * step).astimezone(timezone.utc)
+                page_records.append({"time": ts_point, "price_eur_mwh": val})
+        if not page_records:
+            break
+        raw_records.extend(page_records)
+        if len(series) < 100:
+            break
+        offset += 100
 
-    # --- Process Data ---
+    # process records into Pydantic models
     processed_records: List[Dict[str, Any]] = []
-    if price_data_series is not None and not price_data_series.empty:
-        for ts, price in price_data_series.items():
-            if pd.notna(price):
-                record_time_utc = pd.Timestamp(ts).tz_convert('UTC').to_pydatetime()
-                processed_records.append({
-                    "time": record_time_utc,
-                    "price_region_id": price_region_id,
-                    "price_eur_kwh": float(price)
-                })
-        print(f"Processed {len(processed_records)} price records for price_region_id {price_region_id}.")
-    elif price_data_series is not None and price_data_series.empty:
-        print(f"No price data to process for price_region_id {price_region_id} (empty series).")
-    else:
-        print(f"No price data series available to process for price_region_id {price_region_id}.")
-
+    for rec in raw_records:
+        data = {"price_region_id": price_region_id, "time": rec["time"], "price_eur_mwh": rec["price_eur_mwh"]}
+        try:
+            # exclude unset optional fields (e.g. calculated_price_eur_mwh) from insert payload
+            processed_records.append(PriceIn(**data).model_dump(exclude_none=True))
+        except ValidationError as e:
+            print(f"Validation error for record {data}: {e}")
+    print(f"Processed {len(processed_records)} price records for price_region_id {price_region_id}.")
     return processed_records
+
+async def _make_entsoe_request(
+        base_url: str,
+        params: Dict[str, str],
+        timeout: float = 30.0
+) -> Optional[bytes]:
+    """
+    Makes a GET request to the ENTSO-E API, checking B2 backup first.
+    Returns raw response bytes or None on error.
+    """
+    # prepare cache key
+    params_for_backup = params.copy()
+    backup_key = base_url
+    backup_filename = await b2_handler.check_backup(backup_key, params_for_backup)
+    if backup_filename:
+        # retrieve raw bytes instead of JSON
+        data_bytes = await b2_handler.get_backup_bytes(backup_filename)
+        if data_bytes:
+            print(f"Using cached raw ENTSO-E response: {backup_filename}")
+            return data_bytes
+        else:
+            print(f"Failed to load raw backup {backup_filename}, fetching live...")
+    # live call
+    request_params = params.copy()
+    request_params["securityToken"] = ENTSOE_API_KEY
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.get(base_url, params=request_params, timeout=timeout)
+            resp.raise_for_status()
+            raw = resp.content
+            # save cache without key param
+            await b2_handler.save_backup(backup_key, params_for_backup, raw)
+            return raw
+    except Exception as exc:
+        print(f"Error fetching ENTSO-E API: {exc}")
+        return None
