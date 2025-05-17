@@ -98,10 +98,9 @@ class HouseholdIn(BaseModel):
     enduser_price_formula: str
 
 
-class WeatherForecastIn(BaseModel):
+class WeatherForecastBase(BaseModel):
     forecast_run: datetime
     target_time: datetime
-    location_id: int
     tempmax: Optional[float] = None
     tempmin: Optional[float] = None
     temp: Optional[float] = None
@@ -142,3 +141,67 @@ class WeatherForecastIn(BaseModel):
     dniradiation: Optional[float] = None
     difradiation: Optional[float] = None
     sunelevation: Optional[float] = None
+
+class WeatherForecastIn(WeatherForecastBase):
+    location_id: int
+
+class ForecastEntry(WeatherForecastBase):
+    pass
+
+
+# Define the response model for the RL Agent State
+class RLAgentStateData(BaseModel):
+    timestamp: datetime
+    forecasts: List[ForecastEntry]
+
+    # Price related fields
+    raw_price_eur_mwh: Optional[float] = None
+    calculated_price_eur_mwh: Optional[float] = None
+
+    # PV related fields
+    pv_generation_kwh: Optional[float] = None
+
+    # Load related fields
+    load_consumption_kwh: Optional[float] = None
+
+    # Weather Observation fields
+    obs_temp: Optional[float] = None
+    obs_tempmin: Optional[float] = None
+    obs_tempmax: Optional[float] = None
+    obs_feelslike: Optional[float] = None
+    obs_feelslikemax: Optional[float] = None
+    obs_feelslikemin: Optional[float] = None
+    obs_humidity: Optional[float] = None
+    obs_dew: Optional[float] = None
+    obs_precip: Optional[float] = None
+    obs_precipprob: Optional[float] = None
+    obs_precipcover: Optional[float] = None
+    obs_snow: Optional[float] = None
+    obs_snowdepth: Optional[float] = None
+    obs_windgust: Optional[float] = None
+    obs_windspeed: Optional[float] = None
+    obs_winddir: Optional[float] = None
+    obs_pressure: Optional[float] = None
+    obs_cloudcover: Optional[float] = None
+    obs_visibility: Optional[float] = None
+    obs_solarradiation: Optional[float] = None
+    obs_solarenergy: Optional[float] = None
+    obs_uvindex: Optional[float] = None
+    obs_severerisk: Optional[float] = None
+    obs_windspeedmax: Optional[float] = None
+    obs_windspeedmean: Optional[float] = None
+    obs_windspeedmin: Optional[float] = None
+    obs_sunrise: Optional[str] = None
+    obs_sunset: Optional[str] = None
+    obs_moonphase: Optional[float] = None
+    obs_conditions: Optional[str] = None
+    obs_windspeed50: Optional[float] = None
+    obs_winddir50: Optional[float] = None
+    obs_windspeed80: Optional[float] = None
+    obs_winddir80: Optional[float] = None
+    obs_windspeed100: Optional[float] = None
+    obs_winddir100: Optional[float] = None
+    obs_ghiradiation: Optional[float] = None
+    obs_dniradiation: Optional[float] = None
+    obs_difradiation: Optional[float] = None
+    obs_sunelevation: Optional[float] = None

@@ -1,117 +1,13 @@
 from datetime import datetime
-from typing import List, Optional
+from typing import List, Optional, Set
 import json
 
 from fastapi import APIRouter, Query, HTTPException
-from pydantic import BaseModel
-
-import api.db as db
+from api.schemas import ForecastEntry, RLAgentStateData
 from api.db import database
 from api.helpers.dynamic_query_builder import build_rl_agent_state_query, REQUESTABLE_DB_FIELDS, FORECAST_ENTRY_FIELDS
-
-# Insert nested forecast model
-class ForecastEntry(BaseModel):
-    forecast_run: datetime
-    target_time: datetime
-    temp: Optional[float] = None
-    tempmin: Optional[float] = None
-    tempmax: Optional[float] = None
-    feelslikemax: Optional[float] = None
-    feelslikemin: Optional[float] = None
-    feelslike: Optional[float] = None
-    dew: Optional[float] = None
-    humidity: Optional[float] = None
-    precip: Optional[float] = None
-    precipprob: Optional[float] = None
-    precipcover: Optional[float] = None
-    snow: Optional[float] = None
-    snowdepth: Optional[float] = None
-    windgust: Optional[float] = None
-    windspeed: Optional[float] = None
-    winddir: Optional[float] = None
-    pressure: Optional[float] = None
-    cloudcover: Optional[float] = None
-    visibility: Optional[float] = None
-    solarradiation: Optional[float] = None
-    solarenergy: Optional[float] = None
-    uvindex: Optional[float] = None
-    severerisk: Optional[float] = None
-    windspeedmax: Optional[float] = None
-    windspeedmean: Optional[float] = None
-    windspeedmin: Optional[float] = None
-    sunrise: Optional[str] = None
-    sunset: Optional[str] = None
-    moonphase: Optional[float] = None
-    conditions: Optional[str] = None
-    windspeed50: Optional[float] = None
-    winddir50: Optional[float] = None
-    windspeed80: Optional[float] = None
-    winddir80: Optional[float] = None
-    windspeed100: Optional[float] = None
-    winddir100: Optional[float] = None
-    ghiradiation: Optional[float] = None
-    dniradiation: Optional[float] = None
-    difradiation: Optional[float] = None
-    sunelevation: Optional[float] = None
-
-
-# Define the response model for the RL Agent State
-class RLAgentStateData(BaseModel):
-    timestamp: datetime
-    forecasts: List[ForecastEntry]  # hourly forecast next 7 days per minute
-
-    # Price related fields
-    price_region_id: Optional[int] = None
-    raw_price_eur_mwh: Optional[float] = None
-    calculated_price_eur_mwh: Optional[float] = None
-
-    # PV related fields
-    pv_generation_kwh: Optional[float] = None
-
-    # Load related fields
-    load_consumption_kwh: Optional[float] = None
-
-    # Weather Observation fields
-    obs_temp: Optional[float] = None
-    obs_tempmin: Optional[float] = None
-    obs_tempmax: Optional[float] = None
-    obs_feelslike: Optional[float] = None
-    obs_feelslikemax: Optional[float] = None
-    obs_feelslikemin: Optional[float] = None
-    obs_humidity: Optional[float] = None
-    obs_dew: Optional[float] = None
-    obs_precip: Optional[float] = None
-    obs_precipprob: Optional[float] = None
-    obs_precipcover: Optional[float] = None
-    obs_snow: Optional[float] = None
-    obs_snowdepth: Optional[float] = None
-    obs_windgust: Optional[float] = None
-    obs_windspeed: Optional[float] = None
-    obs_winddir: Optional[float] = None
-    obs_pressure: Optional[float] = None
-    obs_cloudcover: Optional[float] = None
-    obs_visibility: Optional[float] = None
-    obs_solarradiation: Optional[float] = None
-    obs_solarenergy: Optional[float] = None
-    obs_uvindex: Optional[float] = None
-    obs_severerisk: Optional[float] = None
-    obs_windspeedmax: Optional[float] = None
-    obs_windspeedmean: Optional[float] = None
-    obs_windspeedmin: Optional[float] = None
-    obs_sunrise: Optional[str] = None
-    obs_sunset: Optional[str] = None
-    obs_moonphase: Optional[float] = None
-    obs_conditions: Optional[str] = None
-    obs_windspeed50: Optional[float] = None
-    obs_winddir50: Optional[float] = None
-    obs_windspeed80: Optional[float] = None
-    obs_winddir80: Optional[float] = None
-    obs_windspeed100: Optional[float] = None
-    obs_winddir100: Optional[float] = None
-    obs_ghiradiation: Optional[float] = None
-    obs_dniradiation: Optional[float] = None
-    obs_difradiation: Optional[float] = None
-    obs_sunelevation: Optional[float] = None
+from api.helpers.formula_calculator import calculate_price_with_formula
+import api.db as db
 
 
 router = APIRouter(prefix="/rl_agent_state", tags=["rl_agent_state"])
@@ -122,12 +18,21 @@ async def get_rl_agent_state(
     start_time: datetime = Query(...),
     end_time: Optional[datetime] = Query(None),
     fields: Optional[List[str]] = Query(None, description=f"Available fields: {', '.join(REQUESTABLE_DB_FIELDS)}"),
-    forecast_fields: Optional[List[str]] = Query(None, description=f"Available forecast fields: {', '.join(FORECAST_ENTRY_FIELDS)}")
+    forecast_fields: Optional[List[str]] = Query(None, description=f"Available forecast fields: {', '.join(FORECAST_ENTRY_FIELDS)}"),
+    forecast_hours: Optional[int] = Query(None, ge=1, le=192, description="Number of hours for weather forecast data, from 1 to 192.")
 ):
     if end_time is None:
         end_time = start_time
     if end_time < start_time:
         raise HTTPException(status_code=400, detail="end_time cannot be before start_time.")
+
+    # Determine effective fields for the SQL query.
+    # Start with a copy of the user's requested fields (if any).
+    effective_sql_fields: Set[str] = set(fields) if fields else set()
+
+    # If 'calculated_price_eur_mwh' is requested in the API call, enforce inclusion of necessary raw price for calculation.
+    if fields and "calculated_price_eur_mwh" in fields:
+        effective_sql_fields.add("raw_price_eur_mwh")
 
     # Validate household and get related IDs
     household = await database.fetch_one(
@@ -142,18 +47,20 @@ async def get_rl_agent_state(
 
     # Build the query dynamically
     sql = build_rl_agent_state_query(
-        requested_fields_input=fields,
+        requested_fields_input=list(effective_sql_fields) if effective_sql_fields else None,
         forecast_fields_input=forecast_fields,
         household_id=household_id,
         location_id=location_id,
         price_region_id=price_region_id,
         start_str=start_time.isoformat(),
-        end_str=(end_time or start_time).isoformat()
+        end_str=(end_time or start_time).isoformat(),
+        forecast_hours=forecast_hours
     )
     raw_rows = await database.fetch_all(sql)
 
     results = []
-    for r in (dict(r) for r in raw_rows):
+    for r_mapping in raw_rows:
+        r = dict(r_mapping)
         # parse forecasts
         try:
             raw_f = r.get("forecasts") or []
@@ -165,19 +72,35 @@ async def get_rl_agent_state(
         except Exception:
             forecast_list = []
 
-        # base kwargs
+        # Initialize data_kwargs with guaranteed fields
         data_kwargs = {
-            "timestamp": r["timestamp"],
-            "forecasts": forecast_list,
-            "price_region_id": r.get("price_region_id"),
-            "raw_price_eur_mwh": r.get("price_eur_mwh"),
-            "pv_generation_kwh": r.get("generation_kwh"),
-            "load_consumption_kwh": r.get("consumption_kwh"),
+            "timestamp": r["timestamp"], # 'timestamp' is always expected
+            "forecasts": forecast_list, # 'forecasts' can be an empty list
         }
-        # copy any obs_* keys
-        for k, v in r.items():
-            if k.startswith("obs_"):
-                data_kwargs[k] = v
+
+        if "generation_kwh" in r: # Corresponds to "pv_generation_kwh" in fields
+            data_kwargs["pv_generation_kwh"] = r.get("generation_kwh")
+        if "consumption_kwh" in r: # Corresponds to "load_consumption_kwh" in fields
+            data_kwargs["load_consumption_kwh"] = r.get("consumption_kwh")
+        if fields and "raw_price_eur_mwh" in fields:
+            data_kwargs["raw_price_eur_mwh"] = r.get("price_eur_mwh")
+        
+        if fields and "calculated_price_eur_mwh" in fields:
+            # The raw price for calculation is fetched as "price_eur_mwh" from SQL.
+            raw_price_for_calc = r.get("price_eur_mwh") 
+            if household.enduser_price_formula and raw_price_for_calc is not None:
+                calculated_price = calculate_price_with_formula(
+                    household.enduser_price_formula,
+                    raw_price_for_calc
+                )
+                data_kwargs["calculated_price_eur_mwh"] = round(calculated_price, 2)
+            else:
+                data_kwargs["calculated_price_eur_mwh"] = None 
+        
+        # copy any obs_* keys that were fetched
+        for k_obs, v_obs in r.items():
+            if k_obs.startswith("obs_"):
+                data_kwargs[k_obs] = v_obs
 
         results.append(RLAgentStateData(**data_kwargs))
     return results

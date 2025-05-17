@@ -44,11 +44,6 @@ FORECAST_ENTRY_FIELDS = [
 
 # Field Configuration
 FIELD_CONFIG: Dict[str, Dict[str, Any]] = {
-    "price_region_id": {
-        "main_select_expr": f"{CTE_ALIASES['price_data']}.\"price_region_id\"",
-        "cte_dependency": "price_data", "cte_source_column": "price_region_id", "cte_alias": "price_region_id",
-        "cte_table": PRICE_TABLE, "cte_time_column": "time", "cte_filter_column_name": "price_region_id",
-    },
     "raw_price_eur_mwh": {
         "main_select_expr": f"{CTE_ALIASES['price_data']}.\"price_eur_mwh\"",
         "cte_dependency": "price_data", "cte_source_column": "price_eur_mwh", "cte_alias": "price_eur_mwh",
@@ -216,9 +211,10 @@ def _build_forecast_join_sql(
     location_id: int,
     forecast_fields_input: Optional[List[str]],
     fc_table_name: str,
-    fc_cte_alias: str # This is the alias for the LATERAL subquery block, e.g., "fc"
+    fc_cte_alias: str, # This is the alias for the LATERAL subquery block, e.g., "fc"
+    forecast_hours: Optional[int] = None
 ) -> str:
-    """Builds the SQL for the forecast LATERAL JOIN clause."""
+    """Builds the SQL for the forecast LATERAL JOIN clause, using previous working logic."""
     ff_to_select = set(FORECAST_ENTRY_FIELDS)
     if forecast_fields_input:
         ff_to_select = set(forecast_fields_input)
@@ -231,11 +227,16 @@ def _build_forecast_join_sql(
     ]
     
     q_fc_table_name = _quote_sql_identifier(fc_table_name)
-    q_fc_cte_alias = _quote_sql_identifier(fc_cte_alias)
     
-    # wf_alias and fr2_alias are internal to this SQL block
-    wf_alias = _quote_sql_identifier("wf") 
-    fr2_alias = _quote_sql_identifier("fr2")
+    wf_alias = _quote_sql_identifier("wf") # Alias for the weather_forecasts table inside the LATERAL
+    fr2_alias = _quote_sql_identifier("fr2") # Alias for the weather_forecasts table in the subquery
+
+    # Determine the forecast window based on forecast_hours or default to 7 days
+    # PostgreSQL interval syntax: '7 days' or '192 hours'. CAST ensures it's an interval.
+    if forecast_hours is not None:
+        forecast_window_interval_str = f"{forecast_hours} hours"
+    else:
+        forecast_window_interval_str = "7 days"
 
     return f"""
     LEFT JOIN LATERAL (
@@ -255,9 +256,9 @@ def _build_forecast_join_sql(
           WHERE {fr2_alias}."location_id" = {_format_sql_value(location_id)}
             AND {fr2_alias}."forecast_run" <= ms.ts -- ms.ts is from the outer query context
         )
-        AND {wf_alias}."target_time" > ms.ts
-        AND {wf_alias}."target_time" <= ms.ts + interval '7 days'
-    ) {q_fc_cte_alias} ON true"""
+        AND {wf_alias}."target_time" > ms.ts 
+        AND {wf_alias}."target_time" <= ms.ts + CAST('{forecast_window_interval_str}' AS INTERVAL)
+    ) {fc_cte_alias} ON true"""
 
 
 # --- Main Query Builder Function ---
@@ -269,10 +270,12 @@ def build_rl_agent_state_query(
     location_id: int,
     price_region_id: int,
     start_str: str,
-    end_str: str
+    end_str: str,
+    forecast_hours: Optional[int] = None
 ) -> str:
     """
-    Builds the SQL query for RL Agent State dynamically based on requested fields.
+    Builds the main SQL query for fetching RL agent state data.
+    Includes minute series, LOCF for various data types, and optional forecast data.
     """
     selected_fields = _determine_selected_fields(requested_fields_input)
     
@@ -281,7 +284,7 @@ def build_rl_agent_state_query(
     )
 
     cte_definitions: Dict[str, str] = {}
-    main_join_clauses: List[str] = []
+    main_join_sql_parts: List[str] = []
 
     # 1. Minute Series CTE
     cte_definitions["minute_series"] = _build_minute_series_cte_sql(start_str, end_str)
@@ -297,21 +300,22 @@ def build_rl_agent_state_query(
             main_query_cte_alias = CTE_ALIASES.get(cte_name, cte_name) 
             q_cte_name = _quote_sql_identifier(cte_name)
             q_main_query_cte_alias = _quote_sql_identifier(main_query_cte_alias)
-            main_join_clauses.append(
+            main_join_sql_parts.append(
                 f"LEFT JOIN {q_cte_name} AS {q_main_query_cte_alias} "
                 f"ON ms.ts = {q_main_query_cte_alias}.ts"
             )
             
     # 3. Forecasts LATERAL JOIN (if requested)
-    if "forecasts" in selected_fields:
-        fc_cte_alias = CTE_ALIASES['forecast_data'] # Alias for the forecast lateral join block, e.g., "fc"
-        forecast_join_sql_clause = _build_forecast_join_sql(
+    if "forecasts" in selected_fields or (forecast_fields_input and len(forecast_fields_input) > 0):
+        fc_join_sql = _build_forecast_join_sql(
             location_id,
             forecast_fields_input,
-            FC_TABLE,
-            fc_cte_alias
+            FC_TABLE, 
+            CTE_ALIASES["forecast_data"],
+            forecast_hours=forecast_hours
         )
-        main_join_clauses.append(forecast_join_sql_clause.strip())
+        if fc_join_sql: # It might return an empty string if no valid fields
+            main_join_sql_parts.append(fc_join_sql)
 
     # Assemble the final query
     ordered_cte_names = ["minute_series"] + sorted(
@@ -323,7 +327,7 @@ def build_rl_agent_state_query(
 
     select_clause_str = "SELECT\n  " + ",\n  ".join(sorted(list(main_select_expressions)))
     from_clause_str = "FROM minute_series ms"
-    join_clauses_str = "\n".join(main_join_clauses)
+    join_clauses_str = "\n".join(main_join_sql_parts)
 
     final_sql = f"""
 {with_clause_str}
