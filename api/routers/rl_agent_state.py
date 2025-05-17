@@ -77,9 +77,10 @@ async def get_rl_agent_state(
         # Initialize data_kwargs with guaranteed fields
         data_kwargs = {
             "timestamp": r["timestamp"], # 'timestamp' is always expected
-            "forecasts": forecast_list, # 'forecasts' can be an empty list
         }
 
+        if forecast_fields:
+            data_kwargs["forecasts"] = forecast_list
         if "generation_kwh" in r: # Corresponds to "pv_generation_kwh" in fields
             data_kwargs["pv_generation_kwh"] = r.get("generation_kwh")
         if "consumption_kwh" in r: # Corresponds to "load_consumption_kwh" in fields
