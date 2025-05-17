@@ -79,16 +79,16 @@ async def get_rl_agent_state(
             "timestamp": r["timestamp"], # 'timestamp' is always expected
         }
 
-        if fields and "forecasts" in fields:
+        if (fields is None) or ("forecasts" in fields):
             data_kwargs["forecasts"] = forecast_list
         if "generation_kwh" in r: # Corresponds to "pv_generation_kwh" in fields
             data_kwargs["pv_generation_kwh"] = r.get("generation_kwh")
         if "consumption_kwh" in r: # Corresponds to "load_consumption_kwh" in fields
             data_kwargs["load_consumption_kwh"] = r.get("consumption_kwh")
-        if fields and "raw_price_eur_mwh" in fields:
+        if (fields is None) or "raw_price_eur_mwh" in fields:
             data_kwargs["raw_price_eur_mwh"] = r.get("price_eur_mwh")
         
-        if fields and "calculated_price_eur_mwh" in fields:
+        if (fields is None) or "calculated_price_eur_mwh" in fields:
             # The raw price for calculation is fetched as "price_eur_mwh" from SQL.
             raw_price_for_calc = r.get("price_eur_mwh") 
             if household.enduser_price_formula and raw_price_for_calc is not None:
