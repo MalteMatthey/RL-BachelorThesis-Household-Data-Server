@@ -17,7 +17,7 @@ async def get_rl_agent_state(
     household_id: int = Query(...),
     start_time: datetime = Query(...),
     end_time: Optional[datetime] = Query(None),
-    resolution_minutes: int = Query(..., ge=1, le=1440, description="Resolution of the data in minutes, from 1 to 1440."),
+    resolution_minutes: int = Query(1, ge=1, le=1440, description="Resolution of the data in minutes, from 1 to 1440. Default is 1 minute."),
     fields: Optional[List[str]] = Query(None, description=f"Available fields: {', '.join(REQUESTABLE_DB_FIELDS)}"),
     forecast_fields: Optional[List[str]] = Query(None, description=f"Available forecast fields: {', '.join(FORECAST_ENTRY_FIELDS)}"),
     forecast_hours: Optional[int] = Query(None, ge=1, le=192, description="Number of hours for weather forecast data, from 1 to 192.")
