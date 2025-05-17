@@ -14,9 +14,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 46.4,
@@ -62,9 +59,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 47.2,
@@ -110,9 +104,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 50.4,
@@ -158,9 +149,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 49.3,
@@ -206,9 +194,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 51.8,
@@ -254,9 +239,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 51.8,
@@ -302,9 +284,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 50.0,
@@ -350,9 +329,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 51.8,
@@ -398,9 +374,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 52.9,
@@ -446,9 +419,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 53.3,
@@ -494,9 +464,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 56.9,
@@ -542,9 +509,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 59.4,
@@ -590,9 +554,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 66.2,
@@ -638,9 +599,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 61.9,
@@ -686,9 +644,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 53.3,
@@ -734,9 +689,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 44.6,
@@ -782,9 +734,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 40.3,
@@ -830,9 +779,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 41.8,
@@ -878,9 +824,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 43.2,
@@ -926,9 +869,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 40.3,
@@ -974,9 +914,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 33.8,
@@ -1022,9 +959,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 32.8,
@@ -1070,9 +1004,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 29.5,
@@ -1118,9 +1049,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 81.4,
@@ -1166,9 +1094,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 27.0,
@@ -1214,9 +1139,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 36.0,
@@ -1262,9 +1184,6 @@
         "precip": 0.0,
         "precipprob": 0.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.6,
@@ -1310,9 +1229,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 37.4,
@@ -1358,9 +1274,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 33.1,
@@ -1406,9 +1319,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 39.2,
@@ -1454,9 +1364,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 33.8,
@@ -1502,9 +1409,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 40.0,
@@ -1550,9 +1454,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 46.1,
@@ -1598,9 +1499,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 54.0,
@@ -1646,9 +1544,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.0,
@@ -1694,9 +1589,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 71.6,
@@ -1742,9 +1634,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 76.7,
@@ -1790,9 +1679,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 77.4,
@@ -1838,9 +1724,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 83.5,
@@ -1886,9 +1769,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 81.4,
@@ -1934,9 +1814,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 84.6,
@@ -1982,9 +1859,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 81.4,
@@ -2030,9 +1904,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 76.3,
@@ -2078,9 +1949,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 79.6,
@@ -2126,9 +1994,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 72.7,
@@ -2174,9 +2039,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 72.7,
@@ -2222,9 +2084,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 68.4,
@@ -2270,9 +2129,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.0,
@@ -2318,9 +2174,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 65.9,
@@ -2366,9 +2219,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 68.8,
@@ -2414,9 +2264,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 68.4,
@@ -2462,9 +2309,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 72.0,
@@ -2510,9 +2354,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.3,
@@ -2558,9 +2399,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 70.9,
@@ -2606,9 +2444,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 69.1,
@@ -2654,9 +2489,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 72.7,
@@ -2702,9 +2534,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 70.2,
@@ -2750,9 +2579,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 71.3,
@@ -2798,9 +2624,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.0,
@@ -2846,9 +2669,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 69.8,
@@ -2894,9 +2714,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.7,
@@ -2942,9 +2759,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 73.8,
@@ -2990,9 +2804,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 68.4,
@@ -3038,9 +2849,6 @@
         "precip": 0.0,
         "precipprob": 93.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 79.2,
@@ -3086,9 +2894,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 70.6,
@@ -3134,9 +2939,6 @@
         "precip": 0.0,
         "precipprob": 93.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 79.2,
@@ -3182,9 +2984,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 73.8,
@@ -3230,9 +3029,6 @@
         "precip": 0.0,
         "precipprob": 93.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 79.6,
@@ -3278,9 +3074,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 76.7,
@@ -3326,9 +3119,6 @@
         "precip": 0.0,
         "precipprob": 93.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 80.6,
@@ -3374,9 +3164,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 76.7,
@@ -3422,9 +3209,6 @@
         "precip": 0.0,
         "precipprob": 93.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 75.6,
@@ -3470,9 +3254,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 70.2,
@@ -3518,9 +3299,6 @@
         "precip": 0.0,
         "precipprob": 93.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 69.5,
@@ -3566,9 +3344,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 65.2,
@@ -3614,9 +3389,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 73.8,
@@ -3662,9 +3434,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 60.5,
@@ -3710,9 +3479,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 71.6,
@@ -3758,9 +3524,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 71.6,
@@ -3806,9 +3569,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 74.9,
@@ -3854,9 +3614,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.0,
@@ -3902,9 +3659,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 70.2,
@@ -3950,9 +3704,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 71.6,
@@ -3998,9 +3749,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 70.9,
@@ -4046,9 +3794,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 59.8,
@@ -4094,9 +3839,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.7,
@@ -4142,9 +3884,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 58.7,
@@ -4190,9 +3929,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 66.6,
@@ -4238,9 +3974,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 62.3,
@@ -4286,9 +4019,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 64.1,
@@ -4334,9 +4064,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 54.0,
@@ -4382,9 +4109,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 73.4,
@@ -4430,9 +4154,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 59.8,
@@ -4478,9 +4199,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 65.2,
@@ -4526,9 +4244,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 56.5,
@@ -4574,9 +4289,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 72.7,
@@ -4622,9 +4334,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 61.6,
@@ -4670,9 +4379,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 62.6,
@@ -4718,9 +4424,6 @@
         "precip": 0.0,
         "precipprob": 80.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 62.3,
@@ -4766,9 +4469,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 69.5,
@@ -4814,9 +4514,6 @@
         "precip": 0.0,
         "precipprob": 83.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 75.2,
@@ -4862,9 +4559,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 57.2,
@@ -4910,9 +4604,6 @@
         "precip": 0.0,
         "precipprob": 83.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 56.2,
@@ -4958,9 +4649,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 50.4,
@@ -5006,9 +4694,6 @@
         "precip": 0.0,
         "precipprob": 83.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 52.9,
@@ -5054,9 +4739,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.3,
@@ -5102,9 +4784,6 @@
         "precip": 0.0,
         "precipprob": 83.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 59.0,
@@ -5150,9 +4829,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 61.6,
@@ -5198,9 +4874,6 @@
         "precip": 0.0,
         "precipprob": 83.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 52.2,
@@ -5246,9 +4919,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 69.8,
@@ -5294,9 +4964,6 @@
         "precip": 0.0,
         "precipprob": 83.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 65.2,
@@ -5342,9 +5009,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 64.8,
@@ -5390,9 +5054,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.0,
@@ -5438,9 +5099,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 66.6,
@@ -5486,9 +5144,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 64.8,
@@ -5534,9 +5189,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 63.4,
@@ -5582,9 +5234,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 64.8,
@@ -5630,9 +5279,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 63.7,
@@ -5678,9 +5324,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.0,
@@ -5726,9 +5369,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 63.4,
@@ -5774,9 +5414,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 66.6,
@@ -5822,9 +5459,6 @@
         "precip": 0.0,
         "precipprob": 100.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 63.7,
@@ -5870,9 +5504,6 @@
         "precip": 0.0,
         "precipprob": 90.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 69.1,
@@ -5918,9 +5549,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 63.7,
@@ -5966,9 +5594,6 @@
         "precip": 0.0,
         "precipprob": 77.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 65.9,
@@ -6014,9 +5639,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 62.3,
@@ -6062,9 +5684,6 @@
         "precip": 0.0,
         "precipprob": 77.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 60.1,
@@ -6110,9 +5729,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 61.2,
@@ -6158,9 +5774,6 @@
         "precip": 0.0,
         "precipprob": 77.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 64.8,
@@ -6206,9 +5819,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 58.7,
@@ -6254,9 +5864,6 @@
         "precip": 0.0,
         "precipprob": 77.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 67.0,
@@ -6302,9 +5909,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 60.8,
@@ -6350,9 +5954,6 @@
         "precip": 0.0,
         "precipprob": 77.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 64.8,
@@ -6398,9 +5999,6 @@
         "precip": 0.0,
         "precipprob": 96.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 61.6,
@@ -6446,9 +6044,6 @@
         "precip": 0.0,
         "precipprob": 77.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 61.9,
@@ -6494,9 +6089,6 @@
         "precip": 0.0,
         "precipprob": 74.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 58.0,
@@ -6542,9 +6134,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 59.6,
@@ -6590,9 +6179,6 @@
         "precip": 0.0,
         "precipprob": 74.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 57.6,
@@ -6638,9 +6224,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 57.4,
@@ -6686,9 +6269,6 @@
         "precip": 0.0,
         "precipprob": 74.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 57.6,
@@ -6734,9 +6314,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 55.1,
@@ -6782,9 +6359,6 @@
         "precip": 0.0,
         "precipprob": 74.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 56.2,
@@ -6830,9 +6404,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 56.9,
@@ -6878,9 +6449,6 @@
         "precip": 0.0,
         "precipprob": 74.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 56.5,
@@ -6926,9 +6494,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 58.7,
@@ -6974,9 +6539,6 @@
         "precip": 0.0,
         "precipprob": 74.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 54.7,
@@ -7022,9 +6584,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 60.5,
@@ -7070,9 +6629,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 50.8,
@@ -7118,9 +6674,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 52.2,
@@ -7166,9 +6719,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 50.0,
@@ -7214,9 +6764,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 43.9,
@@ -7262,9 +6809,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 50.0,
@@ -7310,9 +6854,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 35.6,
@@ -7358,9 +6899,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 44.3,
@@ -7406,9 +6944,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 30.1,
@@ -7454,9 +6989,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 44.3,
@@ -7502,9 +7034,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 24.6,
@@ -7550,9 +7079,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 45.4,
@@ -7598,9 +7124,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 19.1,
@@ -7646,9 +7169,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 40.3,
@@ -7694,9 +7214,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 18.5,
@@ -7742,9 +7259,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 35.6,
@@ -7790,9 +7304,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 17.9,
@@ -7838,9 +7349,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 31.0,
@@ -7886,9 +7394,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 17.3,
@@ -7934,9 +7439,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.0,
@@ -7982,9 +7484,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 16.1,
@@ -8030,9 +7529,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.8,
@@ -8078,9 +7574,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.9,
@@ -8126,9 +7619,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 12.6,
@@ -8174,9 +7664,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 13.7,
@@ -8222,9 +7709,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 12.6,
@@ -8270,9 +7754,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.2,
@@ -8318,9 +7799,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 12.6,
@@ -8366,9 +7844,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.6,
@@ -8414,9 +7889,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 17.3,
@@ -8462,9 +7934,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 15.1,
@@ -8510,9 +7979,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 18.0,
@@ -8558,9 +8024,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 16.3,
@@ -8606,9 +8069,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 18.7,
@@ -8654,9 +8114,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 17.5,
@@ -8702,9 +8159,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 16.2,
@@ -8750,9 +8204,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 18.7,
@@ -8798,9 +8249,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 13.2,
@@ -8846,9 +8294,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 19.0,
@@ -8894,9 +8339,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 10.2,
@@ -8942,9 +8384,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 19.2,
@@ -8990,9 +8429,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 7.2,
@@ -9038,9 +8474,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 19.4,
@@ -9086,9 +8519,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 7.0,
@@ -9134,9 +8564,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.8,
@@ -9182,9 +8609,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 6.7,
@@ -9230,9 +8654,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 28.1,
@@ -9278,9 +8699,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 6.5,
@@ -9326,9 +8744,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 32.4,
@@ -9374,9 +8789,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 7.8,
@@ -9422,9 +8834,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 31.9,
@@ -9470,9 +8879,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 9.1,
@@ -9518,9 +8924,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 31.4,
@@ -9566,9 +8969,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 10.4,
@@ -9614,9 +9014,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 31.0,
@@ -9662,9 +9059,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 8.0,
@@ -9710,9 +9104,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 27.6,
@@ -9758,9 +9149,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 5.6,
@@ -9806,9 +9194,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 24.2,
@@ -9854,9 +9239,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 3.2,
@@ -9902,9 +9284,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 20.9,
@@ -9950,9 +9329,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 3.5,
@@ -9998,9 +9374,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 20.8,
@@ -10046,9 +9419,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 3.7,
@@ -10094,9 +9464,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 20.6,
@@ -10142,9 +9509,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 4.0,
@@ -10190,9 +9554,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 20.5,
@@ -10238,9 +9599,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 3.7,
@@ -10286,9 +9644,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 15.8,
@@ -10334,7 +9689,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 3.5,
@@ -10380,9 +9734,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.8,
@@ -10428,7 +9779,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 3.2,
@@ -10474,9 +9824,6 @@
         "precip": 0.0,
         "precipprob": 19.4,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 15.1,
@@ -10522,7 +9869,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 4.2,
@@ -10568,9 +9914,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.6,
@@ -10616,7 +9959,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 5.2,
@@ -10662,9 +10004,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.2,
@@ -10710,7 +10049,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 6.1,
@@ -10756,9 +10094,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 13.7,
@@ -10804,7 +10139,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 6.4,
@@ -10850,9 +10184,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.0,
@@ -10898,7 +10229,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 6.6,
@@ -10944,9 +10274,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.4,
@@ -10992,7 +10319,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 6.8,
@@ -11038,9 +10364,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.8,
@@ -11086,7 +10409,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 7.9,
@@ -11132,9 +10454,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 12.0,
@@ -11180,7 +10499,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 9.0,
@@ -11226,9 +10544,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 9.2,
@@ -11274,7 +10589,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 10.1,
@@ -11320,9 +10634,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 6.5,
@@ -11368,7 +10679,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.2,
@@ -11414,9 +10724,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 10.4,
@@ -11462,7 +10769,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 18.2,
@@ -11508,9 +10814,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 14.4,
@@ -11556,7 +10859,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.3,
@@ -11602,9 +10904,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 18.4,
@@ -11650,7 +10949,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.6,
@@ -11696,9 +10994,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 19.9,
@@ -11744,7 +11039,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.0,
@@ -11790,9 +11084,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 21.5,
@@ -11838,7 +11129,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 26.3,
@@ -11884,9 +11174,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.0,
@@ -11932,7 +11219,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 26.0,
@@ -11978,9 +11264,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 24.4,
@@ -12026,7 +11309,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.8,
@@ -12072,9 +11354,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.7,
@@ -12120,7 +11399,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.6,
@@ -12166,9 +11444,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 27.0,
@@ -12214,7 +11489,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.9,
@@ -12260,9 +11534,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 26.5,
@@ -12308,7 +11579,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.2,
@@ -12354,9 +11624,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 26.0,
@@ -12402,7 +11669,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 20.5,
@@ -12448,9 +11714,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.6,
@@ -12496,7 +11759,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.0,
@@ -12542,9 +11804,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.6,
@@ -12590,10 +11849,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.0,
@@ -12639,9 +11894,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.6,
@@ -12687,10 +11939,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.0,
@@ -12736,9 +11984,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.6,
@@ -12784,10 +12029,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.9,
@@ -12833,9 +12074,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.4,
@@ -12881,10 +12119,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.8,
@@ -12930,9 +12164,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.3,
@@ -12978,9 +12209,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.7,
@@ -13026,9 +12254,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.2,
@@ -13074,10 +12299,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.1,
         "windgust": 21.1,
@@ -13123,9 +12344,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.9,
@@ -13171,10 +12389,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.2,
         "windgust": 19.6,
@@ -13220,9 +12434,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 26.6,
@@ -13268,9 +12479,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "snow"
-        ],
         "snow": 0.3,
         "snowdepth": 0.3,
         "windgust": 18.0,
@@ -13316,9 +12524,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 27.4,
@@ -13364,10 +12569,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.43,
         "windgust": 18.2,
@@ -13413,9 +12614,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 26.9,
@@ -13461,10 +12659,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.57,
         "windgust": 18.5,
@@ -13510,9 +12704,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 26.4,
@@ -13558,9 +12749,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "snow"
-        ],
         "snow": 0.4,
         "snowdepth": 0.7,
         "windgust": 18.7,
@@ -13606,9 +12794,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.9,
@@ -13654,10 +12839,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.67,
         "windgust": 19.6,
@@ -13703,9 +12884,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.0,
@@ -13751,10 +12929,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.63,
         "windgust": 20.4,
@@ -13800,9 +12974,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 24.0,
@@ -13848,10 +13019,6 @@
         "precip": 0.0,
         "precipprob": 32.3,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 21.2,
@@ -13897,9 +13064,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.0,
@@ -13945,10 +13109,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 22.6,
@@ -13994,9 +13154,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.3,
@@ -14042,10 +13199,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 23.9,
@@ -14091,9 +13244,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.5,
@@ -14139,10 +13289,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 25.2,
@@ -14188,9 +13334,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.8,
@@ -14236,10 +13379,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 27.0,
@@ -14285,9 +13424,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 24.1,
@@ -14333,10 +13469,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 28.8,
@@ -14382,9 +13514,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 24.5,
@@ -14430,10 +13559,6 @@
         "precip": 0.0,
         "precipprob": 51.6,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 30.6,
@@ -14479,9 +13604,6 @@
         "precip": 0.0,
         "precipprob": 58.1,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 24.8,
@@ -14527,10 +13649,6 @@
         "precip": 0.0,
         "precipprob": 67.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 30.8,
@@ -14576,9 +13694,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 23.9,
@@ -14624,10 +13739,6 @@
         "precip": 0.0,
         "precipprob": 67.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 31.1,
@@ -14673,9 +13784,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.9,
@@ -14721,10 +13829,6 @@
         "precip": 0.0,
         "precipprob": 67.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 31.3,
@@ -14770,9 +13874,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.0,
@@ -14818,10 +13919,6 @@
         "precip": 0.0,
         "precipprob": 67.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 32.3,
@@ -14867,9 +13964,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 0.0,
-        "preciptype": [
-            "rain"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 20.6,
@@ -14915,10 +14009,6 @@
         "precip": 0.0,
         "precipprob": 67.7,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 33.2,
@@ -14964,10 +14054,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 19.3,
@@ -15013,10 +14099,6 @@
         "precip": 0.1,
         "precipprob": 67.7,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 34.2,
@@ -15062,10 +14144,6 @@
         "precip": 0.0,
         "precipprob": 38.7,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 18.0,
@@ -15111,10 +14189,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 34.7,
@@ -15160,10 +14234,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 15.1,
@@ -15209,10 +14279,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 35.2,
@@ -15258,10 +14324,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 12.2,
@@ -15307,10 +14369,6 @@
         "precip": 0.1,
         "precipprob": 35.5,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 35.6,
@@ -15356,10 +14414,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 9.4,
@@ -15405,10 +14459,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 37.1,
@@ -15454,10 +14504,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 7.6,
@@ -15503,10 +14549,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 38.5,
@@ -15552,10 +14594,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 5.8,
@@ -15601,10 +14639,6 @@
         "precip": 0.0,
         "precipprob": 35.5,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 40.0,
@@ -15650,10 +14684,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 4.0,
@@ -15699,10 +14729,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 40.1,
@@ -15748,10 +14774,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 8.8,
@@ -15797,10 +14819,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 40.2,
@@ -15846,10 +14864,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 13.6,
@@ -15895,10 +14909,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 40.3,
@@ -15944,10 +14954,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 18.4,
@@ -15993,10 +14999,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 40.4,
@@ -16042,10 +15044,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 22.1,
@@ -16091,10 +15089,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 40.6,
@@ -16140,10 +15134,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 25.8,
@@ -16189,10 +15179,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.6,
         "windgust": 40.7,
@@ -16238,9 +15224,6 @@
         "precip": 0.0,
         "precipprob": 29.0,
         "precipcover": 12.5,
-        "preciptype": [
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 29.5,
@@ -16286,10 +15269,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.57,
         "windgust": 41.8,
@@ -16335,10 +15314,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 32.4,
@@ -16384,10 +15359,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.53,
         "windgust": 42.8,
@@ -16433,10 +15404,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 35.3,
@@ -16482,10 +15449,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 43.9,
@@ -16531,9 +15494,6 @@
         "precip": 0.1,
         "precipprob": 41.9,
         "precipcover": 12.5,
-        "preciptype": [
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.0,
         "windgust": 38.2,
@@ -16579,10 +15539,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 44.6,
@@ -16628,10 +15584,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.07,
         "windgust": 38.2,
@@ -16677,10 +15629,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 45.4,
@@ -16726,10 +15674,6 @@
         "precip": 0.0,
         "precipprob": 41.9,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.13,
         "windgust": 38.2,
@@ -16775,10 +15719,6 @@
         "precip": 0.0,
         "precipprob": 25.8,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 46.1,
@@ -16824,9 +15764,6 @@
         "precip": 0.5,
         "precipprob": 41.9,
         "precipcover": 12.5,
-        "preciptype": [
-            "snow"
-        ],
         "snow": 0.2,
         "snowdepth": 0.2,
         "windgust": 38.2,
@@ -16872,10 +15809,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 45.4,
@@ -16921,10 +15854,6 @@
         "precip": 0.0,
         "precipprob": 48.4,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.2,
         "windgust": 33.2,
@@ -16970,10 +15899,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 44.6,
@@ -17019,10 +15944,6 @@
         "precip": 0.0,
         "precipprob": 48.4,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.2,
         "windgust": 28.3,
@@ -17068,10 +15989,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 43.9,
@@ -17117,9 +16034,6 @@
         "precip": 0.5,
         "precipprob": 48.4,
         "precipcover": 12.5,
-        "preciptype": [
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.2,
         "windgust": 23.4,
@@ -17165,10 +16079,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 8.33,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 43.3,
@@ -17214,10 +16124,6 @@
         "precip": 0.0,
         "precipprob": 48.4,
         "precipcover": 12.5,
-        "preciptype": [
-            "rain",
-            "snow"
-        ],
         "snow": 0.0,
         "snowdepth": 0.3,
         "windgust": 19.8,
@@ -17263,7 +16169,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 42.7,
@@ -17309,7 +16214,6 @@
         "precip": 0.0,
         "precipprob": 22.6,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 42.1,
@@ -17355,7 +16259,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 41.5,
@@ -17401,7 +16304,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 40.9,
@@ -17447,7 +16349,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.5,
         "windgust": 40.3,
@@ -17493,7 +16394,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.47,
         "windgust": 40.0,
@@ -17539,7 +16439,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.43,
         "windgust": 39.6,
@@ -17585,7 +16484,6 @@
         "precip": 0.0,
         "precipprob": 16.1,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 39.2,
@@ -17631,7 +16529,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 39.5,
@@ -17677,7 +16574,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 39.7,
@@ -17723,7 +16619,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 40.0,
@@ -17769,7 +16664,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 38.0,
@@ -17815,7 +16709,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 36.1,
@@ -17861,7 +16754,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 34.2,
@@ -17907,7 +16799,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 33.5,
@@ -17953,7 +16844,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 32.8,
@@ -17999,7 +16889,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 32.0,
@@ -18045,7 +16934,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 29.8,
@@ -18091,7 +16979,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 27.5,
@@ -18137,7 +17024,6 @@
         "precip": 0.0,
         "precipprob": 3.2,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 25.2,
@@ -18183,7 +17069,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 23.5,
@@ -18229,7 +17114,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 21.8,
@@ -18275,7 +17159,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 20.2,
@@ -18321,7 +17204,6 @@
         "precip": 0.0,
         "precipprob": 6.5,
         "precipcover": 0.0,
-        "preciptype": null,
         "snow": 0.0,
         "snowdepth": 0.4,
         "windgust": 19.8,
