@@ -19,7 +19,6 @@ class WeatherObservationIn(BaseModel):
     precip: Optional[float] = None
     precipprob: Optional[float] = None
     precipcover: Optional[float] = None
-    preciptype: Optional[List[str]] = None
     snow: Optional[float] = None
     snowdepth: Optional[float] = None
     windgust: Optional[float] = None
@@ -114,7 +113,6 @@ class WeatherForecastIn(BaseModel):
     precip: Optional[float] = None
     precipprob: Optional[float] = None
     precipcover: Optional[float] = None
-    preciptype: Optional[List[str]] = None
     snow: Optional[float] = None
     snowdepth: Optional[float] = None
     windgust: Optional[float] = None
