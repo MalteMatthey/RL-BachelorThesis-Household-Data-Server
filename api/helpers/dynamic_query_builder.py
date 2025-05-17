@@ -158,9 +158,9 @@ def _prepare_query_components(
     return main_select_expressions, ctes_to_build_info
 
 
-def _build_minute_series_cte_sql(start_str: str, end_str: str) -> str:
+def _build_minute_series_cte_sql(start_str: str, end_str: str, resolution_minutes: int) -> str:
     """Builds the SQL for the minute_series CTE."""
-    return f"minute_series AS (SELECT generate_series('{start_str}'::timestamptz, '{end_str}'::timestamptz, '1 minute') AS ts)"
+    return f"minute_series AS (SELECT generate_series('{start_str}'::timestamptz, '{end_str}'::timestamptz, '{resolution_minutes} minutes'::interval) AS ts)"
 
 
 def _build_locf_cte_sql(cte_name: str, info: Dict[str, Any]) -> str:
@@ -191,20 +191,20 @@ def _build_locf_cte_sql(cte_name: str, info: Dict[str, Any]) -> str:
     filter_val_sql = _format_sql_value(info['filter_val'])
 
     return f"""
-    {_quote_sql_identifier(cte_name)} AS (
-      SELECT
-        {cte_select_expr_str}
-      FROM minute_series ms
-      LEFT JOIN LATERAL (
+        {_quote_sql_identifier(cte_name)} AS (
         SELECT
-          {lateral_subquery_select_expr_str}
-        FROM {q_table} AS {internal_source_table_alias}
-        WHERE {internal_source_table_alias}.{q_filter_col_name} = {filter_val_sql}
-          AND {internal_source_table_alias}.{q_time_col} <= ms.ts
-        ORDER BY {internal_source_table_alias}.{q_time_col} DESC
-        LIMIT 1
-      ) {lateral_join_block_alias} ON true
-    )"""
+            {cte_select_expr_str}
+        FROM minute_series ms
+        LEFT JOIN LATERAL (
+            SELECT
+            {lateral_subquery_select_expr_str}
+            FROM {q_table} AS {internal_source_table_alias}
+            WHERE {internal_source_table_alias}.{q_filter_col_name} = {filter_val_sql}
+            AND {internal_source_table_alias}.{q_time_col} <= ms.ts
+            ORDER BY {internal_source_table_alias}.{q_time_col} DESC
+            LIMIT 1
+        ) {lateral_join_block_alias} ON true
+        )"""
 
 
 def _build_forecast_join_sql(
@@ -239,26 +239,26 @@ def _build_forecast_join_sql(
         forecast_window_interval_str = "7 days"
 
     return f"""
-    LEFT JOIN LATERAL (
-      SELECT
-        COALESCE(
-          jsonb_agg(
-            jsonb_build_object({', '.join(json_build_object_args)})
-            ORDER BY {wf_alias}."target_time" ASC
-          ),
-          '[]'::jsonb
-        ) AS "forecasts" -- This is the column name selected, must match FIELD_CONFIG
-      FROM {q_fc_table_name} AS {wf_alias}
-      WHERE {wf_alias}."location_id" = {_format_sql_value(location_id)}
-        AND {wf_alias}."forecast_run" = (
-          SELECT MAX({fr2_alias}."forecast_run")
-          FROM {q_fc_table_name} AS {fr2_alias}
-          WHERE {fr2_alias}."location_id" = {_format_sql_value(location_id)}
-            AND {fr2_alias}."forecast_run" <= ms.ts -- ms.ts is from the outer query context
-        )
-        AND {wf_alias}."target_time" > ms.ts 
-        AND {wf_alias}."target_time" <= ms.ts + CAST('{forecast_window_interval_str}' AS INTERVAL)
-    ) {fc_cte_alias} ON true"""
+        LEFT JOIN LATERAL (
+        SELECT
+            COALESCE(
+            jsonb_agg(
+                jsonb_build_object({', '.join(json_build_object_args)})
+                ORDER BY {wf_alias}."target_time" ASC
+            ),
+            '[]'::jsonb
+            ) AS "forecasts" -- This is the column name selected, must match FIELD_CONFIG
+        FROM {q_fc_table_name} AS {wf_alias}
+        WHERE {wf_alias}."location_id" = {_format_sql_value(location_id)}
+            AND {wf_alias}."forecast_run" = (
+            SELECT MAX({fr2_alias}."forecast_run")
+            FROM {q_fc_table_name} AS {fr2_alias}
+            WHERE {fr2_alias}."location_id" = {_format_sql_value(location_id)}
+                AND {fr2_alias}."forecast_run" <= ms.ts -- ms.ts is from the outer query context
+            )
+            AND {wf_alias}."target_time" > ms.ts 
+            AND {wf_alias}."target_time" <= ms.ts + CAST('{forecast_window_interval_str}' AS INTERVAL)
+        ) {fc_cte_alias} ON true"""
 
 
 # --- Main Query Builder Function ---
@@ -271,6 +271,7 @@ def build_rl_agent_state_query(
     price_region_id: int,
     start_str: str,
     end_str: str,
+    resolution_minutes: int,
     forecast_hours: Optional[int] = None
 ) -> str:
     """
@@ -287,7 +288,7 @@ def build_rl_agent_state_query(
     main_join_sql_parts: List[str] = []
 
     # 1. Minute Series CTE
-    cte_definitions["minute_series"] = _build_minute_series_cte_sql(start_str, end_str)
+    cte_definitions["minute_series"] = _build_minute_series_cte_sql(start_str, end_str, resolution_minutes)
 
     # 2. LOCF CTEs
     for cte_name, info in ctes_to_build_info.items():
@@ -296,7 +297,6 @@ def build_rl_agent_state_query(
             cte_definitions[cte_name] = cte_sql.strip()
             
             # Add JOIN clause for this CTE to the main query
-            # The alias for the CTE in the main query's FROM clause
             main_query_cte_alias = CTE_ALIASES.get(cte_name, cte_name) 
             q_cte_name = _quote_sql_identifier(cte_name)
             q_main_query_cte_alias = _quote_sql_identifier(main_query_cte_alias)
@@ -330,10 +330,10 @@ def build_rl_agent_state_query(
     join_clauses_str = "\n".join(main_join_sql_parts)
 
     final_sql = f"""
-{with_clause_str}
-{select_clause_str}
-{from_clause_str}
-{join_clauses_str}
-ORDER BY ms.ts ASC
-"""
+        {with_clause_str}
+        {select_clause_str}
+        {from_clause_str}
+        {join_clauses_str}
+        ORDER BY ms.ts ASC
+        """
     return final_sql.strip()
