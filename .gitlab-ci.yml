@@ -1,6 +1,7 @@
 stages:
   - test
   - mr
+  - sync_main_to_dev
 
 test:
   tags:
@@ -72,6 +73,7 @@ test:
   when: always
 
 
+# Create a merge request from dev to main
 create_mr:
   stage: mr
   image: curlimages/curl:8.4.0
@@ -89,4 +91,37 @@ create_mr:
       fi
   only:
     - dev
+  when: on_success
+
+
+# Automatically merge main back to dev
+auto_merge_main_to_dev:
+  stage: sync_main_to_dev
+  image: alpine/git:v2.30.2 # Using an image with git
+  before_script:
+    - git config --global user.email "${GITLAB_USER_EMAIL:-"gitlab-ci@example.com"}"
+    - git config --global user.name "${GITLAB_USER_NAME:-"GitLab CI"}"
+    - git remote set-url origin "https://gitlab-ci-token:${GITLAB_API_TOKEN}@${CI_SERVER_HOST}/${CI_PROJECT_PATH}.git"
+  script:
+    - echo "Attempting to merge 'main' into 'dev'..."
+    - git fetch origin main
+    - git fetch origin dev
+    - git checkout dev
+    - git reset --hard origin/dev
+    - |
+      # Attempt to merge main into dev.
+      # --no-ff creates a merge commit even if it's a fast-forward, for history clarity.
+      # If the merge fails (e.g., conflicts), the script will exit with an error.
+      if git merge origin/main --no-ff -m "Automated CI: Merge main into dev (Job ID: ${CI_JOB_ID})"; then
+        echo "Merge successful. Pushing dev to origin..."
+        git push origin dev
+        echo "'dev' branch pushed successfully."
+      else
+        echo "Merge conflict detected or other merge error. Automatic merge aborted."
+        echo "Please resolve conflicts manually in the 'dev' branch by merging 'main' into it."
+        # Optionally, you could add steps here to notify someone or create an issue.
+        exit 1 # Fail the job to indicate manual intervention is needed
+      fi
+  only:
+    - main
   when: on_success

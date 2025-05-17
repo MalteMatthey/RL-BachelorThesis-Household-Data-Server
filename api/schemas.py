@@ -152,7 +152,7 @@ class ForecastEntry(WeatherForecastBase):
 # Define the response model for the RL Agent State
 class RLAgentStateData(BaseModel):
     timestamp: datetime
-    forecasts: List[ForecastEntry]
+    forecasts: Optional[List[ForecastEntry]] = None
 
     # Price related fields
     raw_price_eur_mwh: Optional[float] = None
