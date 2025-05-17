@@ -26,7 +26,7 @@ _ALL_AVAILABLE_ELEMENTS = [
     # Temperature
     "tempmax", "tempmin", "temp", "feelslikemax", "feelslikemin", "feelslike", "dew",
     # Precipitation
-    "precip", "precipprob", "precipcover", "preciptype", "snow", "snowdepth",
+    "precip", "precipprob", "precipcover", "snow", "snowdepth",
     # Wind
     "windgust", "windspeed", "windspeedmax", "windspeedmean", "windspeedmin", "winddir",
     "windspeed50", "winddir50", "windspeed80", "winddir80", "windspeed100", "winddir100",

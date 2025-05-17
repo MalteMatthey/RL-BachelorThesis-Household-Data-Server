@@ -7,6 +7,7 @@ from api.db import database, reflect_db_schema
 from api.routers.ingest import router as ingest_router
 from api.routers.metadata import router as metadata_router
 from api.routers.timeseries import router as ts_router
+from api.routers.rl_agent_state import router as rl_agent_state_router
 
 API_KEY = os.getenv("API_KEY")
 
@@ -41,3 +42,4 @@ app = FastAPI(
 app.include_router(ingest_router, dependencies=[Depends(verify_api_key)])
 app.include_router(ts_router, dependencies=[Depends(verify_api_key)])
 app.include_router(metadata_router, dependencies=[Depends(verify_api_key)])
+app.include_router(rl_agent_state_router, dependencies=[Depends(verify_api_key)])
