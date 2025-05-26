@@ -19,10 +19,20 @@ CREATE TABLE locations (
 
 -- 3) Households in a location
 CREATE TABLE households (
-    household_id            SERIAL PRIMARY KEY,
-    location_id             INT    NOT NULL REFERENCES locations(location_id),
-    name                    TEXT   NOT NULL,
-    enduser_price_formula   TEXT   NOT NULL
+    household_id               SERIAL           PRIMARY KEY,
+    location_id                INT              NOT NULL REFERENCES locations(location_id),
+    name                       TEXT             NOT NULL,
+    enduser_price_formula      TEXT             NOT NULL,
+    pv_tilt                    DOUBLE PRECISION NOT NULL,
+    pv_azimuth                 DOUBLE PRECISION NOT NULL,
+    pv_capacity_kw             DOUBLE PRECISION NOT NULL,
+    pv_performance_ratio       DOUBLE PRECISION NOT NULL,
+    pv_temp_model_key          TEXT             NOT NULL,
+    pv_module_temp_coeff_power DOUBLE PRECISION NOT NULL,
+    battery_capacity_kwh       DOUBLE PRECISION NOT NULL,
+    battery_efficiency         DOUBLE PRECISION NOT NULL,
+    battery_max_charge_power   DOUBLE PRECISION NOT NULL,
+    battery_max_discharge_power DOUBLE PRECISION NOT NULL
 );
 
 -- 4) Raw prices per region

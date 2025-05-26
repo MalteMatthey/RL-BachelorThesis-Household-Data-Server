@@ -8,7 +8,6 @@ from typing import List, Dict, Any, Optional
 
 from ..schemas import PriceIn
 from .b2_backup import b2_handler
-# Import the global database instance from api.db
 from api.db import database as app_db
 
 # --- Configuration ---
@@ -20,7 +19,6 @@ if not ENTSOE_API_KEY:
 DEFAULT_EIC_CODE = "10YEU-CONT-SYNC"
 
 _API_DATE_FORMAT = "%Y%m%d%H%M"  # Format for periodStart/periodEnd in ENTSO-E raw API
-_B2_CONCEPTUAL_URL_PRICES = "entsoe_day_ahead_prices"  # For B2 filename generation
 
 
 async def fetch_external_electricity_prices(price_region_id: int, start: datetime, end: datetime) -> List[Dict[str, Any]]:

@@ -39,12 +39,32 @@ created_location_id_2 = None
 HOUSEHOLD_PAYLOAD_1 = {
     # location_id will be set dynamically
     "name": "Household1Loc1",
-    "enduser_price_formula": "price * 1.19 + 0.5"
+    "enduser_price_formula": "price * 1.19 + 0.5",
+    "pv_tilt": 30,
+    "pv_azimuth": 180,
+    "pv_capacity_kw": 50,
+    "pv_performance_ratio": 0.84,
+    "pv_temp_model_key": "open_rack_glass_glass",
+    "pv_module_temp_coeff_power": -0.004,
+    "battery_capacity_kwh": 40,
+    "battery_efficiency": 0.95,
+    "battery_max_charge_power": 20,
+    "battery_max_discharge_power": 20
 }
 HOUSEHOLD_PAYLOAD_2 = {
     # location_id will be set dynamically
     "name": "Household1Loc2",
-    "enduser_price_formula": "price * 1.1"
+    "enduser_price_formula": "price * 1.1",
+    "pv_tilt": 30,
+    "pv_azimuth": 180,
+    "pv_capacity_kw": 5,
+    "pv_performance_ratio": 0.8,
+    "pv_temp_model_key": "open_rack_glass_glass",
+    "pv_module_temp_coeff_power": -0.004,
+    "battery_capacity_kwh": 40,
+    "battery_efficiency": 0.95,
+    "battery_max_charge_power": 20,
+    "battery_max_discharge_power": 20
 }
 
 created_household_id_1 = None
@@ -311,6 +331,16 @@ def test_create_household_1(http_client, base_url):
     assert response_data["name"] == HOUSEHOLD_PAYLOAD_1["name"]
     assert response_data["location_id"] == HOUSEHOLD_PAYLOAD_1["location_id"]
     assert response_data.get("enduser_price_formula") == HOUSEHOLD_PAYLOAD_1["enduser_price_formula"]
+    assert response_data["pv_tilt"] == HOUSEHOLD_PAYLOAD_1["pv_tilt"]
+    assert response_data["pv_azimuth"] == HOUSEHOLD_PAYLOAD_1["pv_azimuth"]
+    assert response_data["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_1["pv_capacity_kw"]
+    assert response_data["pv_performance_ratio"] == HOUSEHOLD_PAYLOAD_1["pv_performance_ratio"]
+    assert response_data["pv_temp_model_key"] == HOUSEHOLD_PAYLOAD_1["pv_temp_model_key"]
+    assert response_data["pv_module_temp_coeff_power"] == HOUSEHOLD_PAYLOAD_1["pv_module_temp_coeff_power"]
+    assert response_data["battery_capacity_kwh"] == HOUSEHOLD_PAYLOAD_1["battery_capacity_kwh"]
+    assert response_data["battery_efficiency"] == HOUSEHOLD_PAYLOAD_1["battery_efficiency"]
+    assert response_data["battery_max_charge_power"] == HOUSEHOLD_PAYLOAD_1["battery_max_charge_power"]
+    assert response_data["battery_max_discharge_power"] == HOUSEHOLD_PAYLOAD_1["battery_max_discharge_power"]
     assert "household_id" in response_data
     created_household_id_1 = response_data["household_id"]
 
@@ -326,7 +356,17 @@ def test_create_household_2(http_client, base_url):
     response_data = response.json()
     assert response_data["name"] == HOUSEHOLD_PAYLOAD_2["name"]
     assert response_data["location_id"] == HOUSEHOLD_PAYLOAD_2["location_id"]
-    assert response_data.get("enduser_price_formula") == HOUSEHOLD_PAYLOAD_2["enduser_price_formula"]
+    assert response_data["enduser_price_formula"] == HOUSEHOLD_PAYLOAD_2["enduser_price_formula"]
+    assert response_data["pv_tilt"] == HOUSEHOLD_PAYLOAD_2["pv_tilt"]
+    assert response_data["pv_azimuth"] == HOUSEHOLD_PAYLOAD_2["pv_azimuth"]
+    assert response_data["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_2["pv_capacity_kw"]
+    assert response_data["pv_performance_ratio"] == HOUSEHOLD_PAYLOAD_2["pv_performance_ratio"]
+    assert response_data["pv_temp_model_key"] == HOUSEHOLD_PAYLOAD_2["pv_temp_model_key"]
+    assert response_data["pv_module_temp_coeff_power"] == HOUSEHOLD_PAYLOAD_2["pv_module_temp_coeff_power"]
+    assert response_data["battery_capacity_kwh"] == HOUSEHOLD_PAYLOAD_2["battery_capacity_kwh"]
+    assert response_data["battery_efficiency"] == HOUSEHOLD_PAYLOAD_2["battery_efficiency"]
+    assert response_data["battery_max_charge_power"] == HOUSEHOLD_PAYLOAD_2["battery_max_charge_power"]
+    assert response_data["battery_max_discharge_power"] == HOUSEHOLD_PAYLOAD_2["battery_max_discharge_power"]
     assert "household_id" in response_data
     created_household_id_2 = response_data["household_id"]
 
@@ -336,7 +376,17 @@ def test_create_household_with_non_existent_location(http_client, base_url):
     payload = {
         "location_id": non_existent_location_id,
         "name": "HouseholdWithInvalidLocation",
-        "enduser_price_formula": "price * 1.0"
+        "enduser_price_formula": "price * 1.0",
+        "pv_tilt": 30,
+        "pv_azimuth": 180,
+        "pv_capacity_kw": 5,
+        "pv_performance_ratio": 0.8,
+        "pv_temp_model_key": "open_rack_glass_glass",
+        "pv_module_temp_coeff_power": -0.004,
+        "battery_capacity_kwh": 40,
+        "battery_efficiency": 0.95,
+        "battery_max_charge_power": 20,
+        "battery_max_discharge_power": 20
     }
     url = f"{base_url}/metadata/households"
     response = http_client.post(url, json=payload)
@@ -350,7 +400,17 @@ def test_create_household_with_invalid_formula(http_client, base_url):
     payload_invalid_variable = {
         "location_id": created_location_id_1,
         "name": "HouseholdWithInvalidFormulaVar",
-        "enduser_price_formula": "price * x + 0.5" 
+        "enduser_price_formula": "price * x + 0.5",
+        "pv_tilt": 30,
+        "pv_azimuth": 180,
+        "pv_capacity_kw": 5,
+        "pv_performance_ratio": 0.8,
+        "pv_temp_model_key": "open_rack_glass_glass",
+        "pv_module_temp_coeff_power": -0.004,
+        "battery_capacity_kwh": 40,
+        "battery_efficiency": 0.95,
+        "battery_max_charge_power": 20,
+        "battery_max_discharge_power": 20
     }
     url = f"{base_url}/metadata/households"
     response = http_client.post(url, json=payload_invalid_variable)
@@ -368,6 +428,18 @@ def test_get_specific_household_1(http_client, base_url):
     assert response_data["household_id"] == created_household_id_1
     assert response_data["name"] == HOUSEHOLD_PAYLOAD_1["name"]
     assert response_data["location_id"] == HOUSEHOLD_PAYLOAD_1["location_id"]
+    assert response_data["enduser_price_formula"] == HOUSEHOLD_PAYLOAD_1["enduser_price_formula"]
+    assert response_data["pv_tilt"] == HOUSEHOLD_PAYLOAD_1["pv_tilt"]
+    assert response_data["pv_azimuth"] == HOUSEHOLD_PAYLOAD_1["pv_azimuth"]
+    assert response_data["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_1["pv_capacity_kw"]
+    assert response_data["pv_performance_ratio"] == HOUSEHOLD_PAYLOAD_1["pv_performance_ratio"]
+    assert response_data["pv_temp_model_key"] == HOUSEHOLD_PAYLOAD_1["pv_temp_model_key"]
+    assert response_data["pv_module_temp_coeff_power"] == HOUSEHOLD_PAYLOAD_1["pv_module_temp_coeff_power"]
+    assert response_data["battery_capacity_kwh"] == HOUSEHOLD_PAYLOAD_1["battery_capacity_kwh"]
+    assert response_data["battery_efficiency"] == HOUSEHOLD_PAYLOAD_1["battery_efficiency"]
+    assert response_data["battery_max_charge_power"] == HOUSEHOLD_PAYLOAD_1["battery_max_charge_power"]
+    assert response_data["battery_max_discharge_power"] == HOUSEHOLD_PAYLOAD_1["battery_max_discharge_power"]
+
 
 def test_get_all_households(http_client, base_url):
     """Test retrieving all households."""
@@ -388,9 +460,31 @@ def test_get_all_households(http_client, base_url):
         if hh["household_id"] == created_household_id_1:
             assert hh["name"] == HOUSEHOLD_PAYLOAD_1["name"]
             assert hh["location_id"] == HOUSEHOLD_PAYLOAD_1["location_id"]
+            assert hh["enduser_price_formula"] == HOUSEHOLD_PAYLOAD_1["enduser_price_formula"]
+            assert hh["pv_tilt"] == HOUSEHOLD_PAYLOAD_1["pv_tilt"]
+            assert hh["pv_azimuth"] == HOUSEHOLD_PAYLOAD_1["pv_azimuth"]
+            assert hh["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_1["pv_capacity_kw"]
+            assert hh["pv_performance_ratio"] == HOUSEHOLD_PAYLOAD_1["pv_performance_ratio"]
+            assert hh["pv_temp_model_key"] == HOUSEHOLD_PAYLOAD_1["pv_temp_model_key"]
+            assert hh["pv_module_temp_coeff_power"] == HOUSEHOLD_PAYLOAD_1["pv_module_temp_coeff_power"]
+            assert hh["battery_capacity_kwh"] == HOUSEHOLD_PAYLOAD_1["battery_capacity_kwh"]
+            assert hh["battery_efficiency"] == HOUSEHOLD_PAYLOAD_1["battery_efficiency"]
+            assert hh["battery_max_charge_power"] == HOUSEHOLD_PAYLOAD_1["battery_max_charge_power"]
+            assert hh["battery_max_discharge_power"] == HOUSEHOLD_PAYLOAD_1["battery_max_discharge_power"]
         elif hh["household_id"] == created_household_id_2:
             assert hh["name"] == HOUSEHOLD_PAYLOAD_2["name"]
             assert hh["location_id"] == HOUSEHOLD_PAYLOAD_2["location_id"]
+            assert hh["enduser_price_formula"] == HOUSEHOLD_PAYLOAD_2["enduser_price_formula"]
+            assert hh["pv_tilt"] == HOUSEHOLD_PAYLOAD_2["pv_tilt"]
+            assert hh["pv_azimuth"] == HOUSEHOLD_PAYLOAD_2["pv_azimuth"]
+            assert hh["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_2["pv_capacity_kw"]
+            assert hh["pv_performance_ratio"] == HOUSEHOLD_PAYLOAD_2["pv_performance_ratio"]
+            assert hh["pv_temp_model_key"] == HOUSEHOLD_PAYLOAD_2["pv_temp_model_key"]
+            assert hh["pv_module_temp_coeff_power"] == HOUSEHOLD_PAYLOAD_2["pv_module_temp_coeff_power"]
+            assert hh["battery_capacity_kwh"] == HOUSEHOLD_PAYLOAD_2["battery_capacity_kwh"]
+            assert hh["battery_efficiency"] == HOUSEHOLD_PAYLOAD_2["battery_efficiency"]
+            assert hh["battery_max_charge_power"] == HOUSEHOLD_PAYLOAD_2["battery_max_charge_power"]
+            assert hh["battery_max_discharge_power"] == HOUSEHOLD_PAYLOAD_2["battery_max_discharge_power"]
 
 def test_get_households_by_location_id(http_client, base_url):
     """Test retrieving households filtered by location_id."""
