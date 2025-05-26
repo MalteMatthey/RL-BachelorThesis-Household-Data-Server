@@ -78,7 +78,6 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
             "out_Domain": country_code,
             "in_Domain": country_code,
             "contract_MarketAgreement.type": "A01",
-            "classificationSequence_AttributeInstanceComponent.position": "1",
             "offset": str(offset)
         }
         raw = await _make_entsoe_request(API_URL, params)
