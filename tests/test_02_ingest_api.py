@@ -120,10 +120,8 @@ def test_ingest_load_data_with_pv_simulation_household_2(http_client, base_url):
     assert response.status_code == 200
     response_data = response.json()
 
-    expected_response = EXPECTED_LOAD_SIMULATE_PV_RESPONSE.copy()
-    expected_response["simulated_pv_records"] = response_data.get("simulated_pv_records", 0)
-    
-    assert response_data == expected_response
+    # Verify all fields, including the expected number of simulated PV records
+    assert response_data == EXPECTED_LOAD_SIMULATE_PV_RESPONSE
 
 def test_ingest_load_data_non_existent_household(http_client, base_url):
     """Test ingesting load data for a non-existent household."""

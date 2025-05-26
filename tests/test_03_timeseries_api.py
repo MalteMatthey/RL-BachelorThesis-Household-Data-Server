@@ -153,5 +153,5 @@ def test_get_simulated_pv_timeseries(http_client, base_url):
     response = http_client.get(url)
     assert response.status_code == 200
     data = response.json()
-    expected = load_expected('simulated_load.json')
+    expected = load_expected('simulated_pv_generation.json')
     assert data == expected
