@@ -9,7 +9,8 @@ from math import floor
 
 import api.db as db
 from api.db import database
-from api.schemas import BulkLoad, BulkPV
+from api.schemas import BulkPV, BulkLoad
+from api.services.fetch_simulated_pv_data import fetch_simulated_pv_data
 from api.services.fetch_electricity_price_data import fetch_external_electricity_prices
 from api.services.fetch_weather_data import fetch_external_weather_observations, fetch_external_weather_forecasts
 
@@ -27,9 +28,20 @@ async def ingest_pv(payload: BulkPV):
 
 @router.post("/load_data")
 async def ingest_load(payload: BulkLoad):
-    """Ingests load data and fetches related external data if PV data exists for the overlap."""
+    """
+    Ingests load data.
+    Optionally fetches/simulates PV data and related external data if `simulate_pv_generation` is true.
+    Otherwise, fetches related external data if PV data exists for the overlap.
+    """
     records = [item.model_dump() for item in payload.data]
-    return await _handle_ingestion(records, db.load_tbl, db.pv_tbl, "load")
+    simulate_flag = bool(payload.simulate_pv_generation)
+    return await _handle_ingestion(
+        records,
+        db.load_tbl,
+        db.pv_tbl,
+        "load",
+        simulate_pv_generation=simulate_flag
+    )
 
 
 # --- Helper Functions ---
@@ -220,7 +232,8 @@ async def _handle_ingestion(
         records: List[Dict],
         primary_table: Table,
         secondary_table: Table,
-        record_type: str  # e.g., "load" or "pv"
+        record_type: str,  # e.g., "load" or "pv"
+        simulate_pv_generation: bool = False
 ):
     """Handles the ingestion process for load or PV data."""
 
@@ -236,6 +249,36 @@ async def _handle_ingestion(
     # Get metadata: household->location mapping, and UNIQUE location/region IDs for this batch
     _, unique_location_ids, unique_price_region_ids = await _get_household_metadata(household_ids)
 
+    # Simulation mode: fetch and insert weather/prices before simulating PV
+    if record_type == "load" and simulate_pv_generation:
+        min_fetch_time = min_incoming_time
+        max_fetch_time = max_incoming_time
+        print(f"Fetching external weather and price data for simulation period: {min_fetch_time} to {max_fetch_time}")
+        weather_obs, weather_fc, prices = await _fetch_external_data(
+            unique_location_ids, unique_price_region_ids, min_fetch_time, max_fetch_time
+        )
+        async with database.transaction():
+            # insert load data
+            pk_cols = [col.name for col in primary_table.primary_key.columns]
+            await _insert_records(records, primary_table, record_type, unique_keys=pk_cols)
+
+            # insert fetched weather and prices
+            await _insert_records(weather_obs, db.weather_obs_tbl, "weather observation", unique_keys=["location_id", "datetime"])
+            await _insert_records(weather_fc, db.weather_fc_tbl, "weather forecast", unique_keys=["location_id", "forecast_run", "target_time"])
+            await _insert_records(prices, db.price_tbl, "electricity price", unique_keys=["price_region_id", "time"])
+
+            # simulate PV now that weather is in DB
+            simulated = await fetch_simulated_pv_data(household_ids, min_fetch_time, max_fetch_time)
+            await _insert_records(simulated, db.pv_tbl, "simulated PV", unique_keys=["household_id", "time"])
+        return {
+            f"inserted_{record_type}": len(records),
+            "fetched_weather_obs": len(weather_obs),
+            "fetched_weather_fc": len(weather_fc),
+            "fetched_prices": len(prices),
+            "simulated_pv_records": len(simulated),
+            "detail": "Load data ingested and PV simulated using fetched weather."
+        }
+
     # Get time range of existing data in the *other* table
     min_secondary_time, max_secondary_time = await _get_existing_time_range(secondary_table, household_ids)
 
@@ -249,57 +292,27 @@ async def _handle_ingestion(
     weather_fc_to_insert: List[Dict] = []
     prices_to_insert: List[Dict] = []
 
-    # Fetch external data only if there's an overlap
+    # Non-simulation mode:
     if min_fetch_time and max_fetch_time:
         print(f"Overlap detected. Fetching external data from {min_fetch_time} to {max_fetch_time}")
-        # Pass the unique sets of IDs for fetching. _fetch_external_data handles
-        # fetching once per unique ID.
         weather_obs_to_insert, weather_fc_to_insert, prices_to_insert = await _fetch_external_data(
             unique_location_ids, unique_price_region_ids, min_fetch_time, max_fetch_time
         )
     else:
-        print(
-            f"No time overlap found with existing {secondary_table.name} data for these households, or secondary data missing. Skipping external data fetch.")
+        print(f"No time overlap found with existing {secondary_table.name} data for these households, and not simulating PV. Skipping external data fetch.")
 
     async with database.transaction():
-        # --- primary data (load or PV) ---
-        # derive the PK columns from the table
         pk_cols = [col.name for col in primary_table.primary_key.columns]
-        await _insert_records(
-            records,
-            primary_table,
-            record_type,
-            unique_keys=pk_cols
-        )
-
-        # --- weather observations ---
-        await _insert_records(
-            weather_obs_to_insert,
-            db.weather_obs_tbl,
-            "weather observation",
-            unique_keys=["location_id", "datetime"]
-        )
-
-        # --- weather forecasts ---
-        await _insert_records(
-            weather_fc_to_insert,
-            db.weather_fc_tbl,
-            "weather forecast",
-            unique_keys=["location_id", "forecast_run", "target_time"]
-        )
-
-        # --- electricity prices ---
-        await _insert_records(
-            prices_to_insert,
-            db.price_tbl,
-            "electricity price",
-            unique_keys=["price_region_id", "time"]
-        )
+        await _insert_records(records, primary_table, record_type, unique_keys=pk_cols)
+        await _insert_records(weather_obs_to_insert, db.weather_obs_tbl, "weather observation", unique_keys=["location_id", "datetime"])
+        await _insert_records(weather_fc_to_insert, db.weather_fc_tbl, "weather forecast", unique_keys=["location_id", "forecast_run", "target_time"])
+        await _insert_records(prices_to_insert, db.price_tbl, "electricity price", unique_keys=["price_region_id", "time"])
 
     return {
         f"inserted_{record_type}": len(records),
         "fetched_weather_obs": len(weather_obs_to_insert),
         "fetched_weather_fc": len(weather_fc_to_insert),
         "fetched_prices": len(prices_to_insert),
-        "detail": f"{record_type.capitalize()} data ingested. Related data fetched for overlapping time period if applicable."
+        "simulated_pv_records": "No simulation performed",
+        "detail": f"{record_type.capitalize()} data ingested. Related data fetched for overlapping time period or simulation period if applicable."
     }

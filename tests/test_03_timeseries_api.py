@@ -3,7 +3,7 @@
 import os
 import json
 import pytest
-from test_02_ingest_api import LOAD_DATA_PAYLOAD, PV_GENERATION_PAYLOAD
+from test_02_ingest_api import LOAD_DATA_PAYLOAD, PV_GENERATION_PAYLOAD, LOAD_DATA_SIMULATE_PV_PAYLOAD
 
 # Constants for test timeframes
 START_TIMESTAMP = "2024-01-01T00:00:00Z"
@@ -135,3 +135,23 @@ def test_get_pv_timeseries(http_client, base_url):
     data = response.json()
     data_sorted = sorted(data, key=lambda x: x['time'])
     assert data_sorted == payload["data"]
+
+def test_get_simulated_pv_timeseries(http_client, base_url):
+    """Test getting simulated PV timeseries."""
+    # discover a household (using the second household with simulated data)
+    resp = http_client.get(f"{base_url}/metadata/households")
+    assert resp.status_code == 200
+    hhs = resp.json()
+    assert isinstance(hhs, list) and hhs, "No households available"
+    household_id = hhs[1]["household_id"]
+
+    # Use original timestamps for API query parameters
+    original_start_time = LOAD_DATA_SIMULATE_PV_PAYLOAD["data"][0]["time"]
+    original_end_time = LOAD_DATA_SIMULATE_PV_PAYLOAD["data"][-1]["time"]
+        
+    url = f"{base_url}/timeseries/pv?household_id={household_id}&start={original_start_time}&end={original_end_time}"
+    response = http_client.get(url)
+    assert response.status_code == 200
+    data = response.json()
+    expected = load_expected('simulated_pv_generation.json')
+    assert data == expected

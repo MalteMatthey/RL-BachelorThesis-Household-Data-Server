@@ -68,6 +68,7 @@ class LoadIn(BaseModel):
 
 class BulkLoad(BaseModel):
     data: List[LoadIn] = Field(...)
+    simulate_pv_generation: bool = False    
 
 
 class PriceIn(BaseModel):
@@ -96,6 +97,16 @@ class HouseholdIn(BaseModel):
     location_id: int
     name: str
     enduser_price_formula: str
+    pv_tilt: float
+    pv_azimuth: float
+    pv_capacity_kw: float
+    pv_performance_ratio: float
+    pv_temp_model_key: str
+    pv_module_temp_coeff_power: float
+    battery_capacity_kwh: float
+    battery_efficiency: float
+    battery_max_charge_power: float
+    battery_max_discharge_power: float
 
 
 class WeatherForecastBase(BaseModel):
@@ -147,7 +158,6 @@ class WeatherForecastIn(WeatherForecastBase):
 
 class ForecastEntry(WeatherForecastBase):
     pass
-
 
 # Define the response model for the RL Agent State
 class RLAgentStateData(BaseModel):
