@@ -54,32 +54,20 @@ class B2BackupHandler:
         """Checks if the B2 handler is properly initialized and enabled."""
         return self.api is not None and self.bucket is not None
 
-    def _generate_filename(self, url: str, params: Dict[str, Any]) -> str:
+    def _generate_filename(self, url: str, params: Dict[str, Any], file_extension: str = "json") -> str:
         """Generates a unique, deterministic filename based on URL and params."""
-        # Ensure consistent order of parameters
         sorted_params = sorted(params.items())
-        # Create a stable string representation
         query_string = urlencode(sorted_params)
         full_request_string = f"{url}?{query_string}"
-        # Hash the string for a unique filename
         hasher = hashlib.sha256()
         hasher.update(full_request_string.encode('utf-8'))
-        # Use hexdigest and add .json extension
-        return f"{hasher.hexdigest()}.json"
+        return f"{hasher.hexdigest()}.{file_extension}"
 
-    async def check_backup(self, url: str, params: Dict[str, Any]) -> Optional[str]:
-        """
-        Checks if a backup exists for the given request using threadpool.
-
-        Returns:
-            The filename if the backup exists, None otherwise.
-        """
+    async def check_backup(self, url: str, params: Dict[str, Any], file_extension: str = "json") -> Optional[str]:
         if not self.is_enabled():
             return None
-
-        filename = self._generate_filename(url, params)
+        filename = self._generate_filename(url, params, file_extension)
         try:
-            # Use run_in_threadpool for the synchronous SDK call
             await run_in_threadpool(self.bucket.get_file_info_by_name, filename)
             print(f"Backup found in B2: {filename}")
             return filename
@@ -87,13 +75,12 @@ class B2BackupHandler:
             print(f"Backup not found in B2 for: {filename}")
             return None
         except Exception as e:
-            # Check if the error is due to authorization specifically
             if "unauthorized" in str(e).lower():
                 print(
                     f"Authorization error checking B2 backup for {filename}: {e}. Check B2 key permissions (needs readFiles).")
             else:
                 print(f"Error checking B2 backup for {filename}: {e}")
-            return None  # Treat errors as backup not found
+            return None
 
     def _download_b2_file_sync(self, filename: str, download_dest: io.BytesIO):
         """Synchronous helper to download a B2 file into a BytesIO object."""
@@ -140,24 +127,20 @@ class B2BackupHandler:
             print(f"Error processing B2 backup {filename}: {e}")
             return None
 
-    async def save_backup(self, url: str, params: Dict[str, Any], content: bytes):
-        """Saves the raw API response content to B2 using threadpool."""
+    async def save_backup(self, url: str, params: Dict[str, Any], content: bytes, file_extension: str = "json"):
         if not self.is_enabled():
             return
-
-        filename = self._generate_filename(url, params)
+        filename = self._generate_filename(url, params, file_extension)
         print(f"Attempting to save backup to B2: {filename} ({len(content)} bytes)")
         try:
-            # Use run_in_threadpool for the synchronous SDK call
             file_info = await run_in_threadpool(
                 self.bucket.upload_bytes,
                 data_bytes=content,
                 file_name=filename,
-                content_type='application/octet-stream'  # Store raw bytes
+                content_type='application/octet-stream'
             )
             print(f"Successfully uploaded backup to B2: {filename} (ID: {file_info.id_})")
         except Exception as e:
-            # Check if the error is due to authorization specifically
             if "unauthorized" in str(e).lower():
                 print(
                     f"Authorization error saving B2 backup {filename}: {e}. Check B2 key permissions (needs writeFiles).")

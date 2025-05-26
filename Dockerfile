@@ -17,8 +17,15 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy the current directory contents into the container at /app
 COPY . .
 
+# copy entrypoint
+COPY docker-entrypoint.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
 # Expose port 8021
 EXPOSE 8021
+
+# Set the entrypoint script (create CDS API configuration file)
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 
 # Run the FastAPI app with Uvicorn
 CMD ["uvicorn", "api.main:app", "--host", "0.0.0.0", "--port", "8021"]

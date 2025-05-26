@@ -14,3 +14,7 @@ pytest-asyncio
 pytest-mock
 types-requests
 simpleeval
+pvlib
+cdsapi
+matplotlib
+timezonefinder

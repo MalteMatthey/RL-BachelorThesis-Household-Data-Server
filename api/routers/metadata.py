@@ -159,13 +159,33 @@ async def create_household(household: HouseholdIn):
         .values(
             location_id=household.location_id,
             name=household.name,
-            enduser_price_formula=household.enduser_price_formula
+            enduser_price_formula=household.enduser_price_formula,
+            pv_tilt=household.pv_tilt,
+            pv_azimuth=household.pv_azimuth,
+            pv_capacity_kw=household.pv_capacity_kw,
+            pv_performance_ratio=household.pv_performance_ratio,
+            pv_temp_model_key=household.pv_temp_model_key,
+            pv_module_temp_coeff_power=household.pv_module_temp_coeff_power,
+            battery_capacity_kwh=household.battery_capacity_kwh,
+            battery_efficiency=household.battery_efficiency,
+            battery_max_charge_power=household.battery_max_charge_power,
+            battery_max_discharge_power=household.battery_max_discharge_power
         )
         .returning(
             db.households_tbl.c.household_id,
             db.households_tbl.c.location_id,
             db.households_tbl.c.name,
-            db.households_tbl.c.enduser_price_formula
+            db.households_tbl.c.enduser_price_formula,
+            db.households_tbl.c.pv_tilt,
+            db.households_tbl.c.pv_azimuth,
+            db.households_tbl.c.pv_capacity_kw,
+            db.households_tbl.c.pv_performance_ratio,
+            db.households_tbl.c.pv_temp_model_key,
+            db.households_tbl.c.pv_module_temp_coeff_power,
+            db.households_tbl.c.battery_capacity_kwh,
+            db.households_tbl.c.battery_efficiency,
+            db.households_tbl.c.battery_max_charge_power,
+            db.households_tbl.c.battery_max_discharge_power
         )
     )
 
