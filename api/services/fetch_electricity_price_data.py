@@ -78,7 +78,6 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
             "out_Domain": country_code,
             "in_Domain": country_code,
             "contract_MarketAgreement.type": "A01",
-            "classificationSequence_AttributeInstanceComponent.position": "1",
             "offset": str(offset)
         }
         raw = await _make_entsoe_request(API_URL, params)
@@ -100,9 +99,25 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
         for ts in series:
             # use wildcard namespace on nested elements
             period = ts.find("{*}Period")
+            if period is None:
+                continue
             interval = period.find("{*}timeInterval")
-            start_iso = interval.find("{*}start").text
-            resolution = period.find("{*}resolution").text
+            if interval is None:
+                continue
+            start_iso_element = interval.find("{*}start")
+            if start_iso_element is None or start_iso_element.text is None:
+                continue
+            start_iso = start_iso_element.text
+
+            resolution_element = period.find("{*}resolution")
+            if resolution_element is None or resolution_element.text is None:
+                continue
+            resolution = resolution_element.text
+
+            # Filter for hourly resolution only
+            if resolution not in ("PT60M", "PT1H"):
+                continue  # Skip this TimeSeries if it's not hourly
+
             try:
                 base_dt = datetime.fromisoformat(start_iso.replace("Z", "+00:00"))
             except ValueError:
@@ -138,8 +153,38 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
             processed_records.append(PriceIn(**data).model_dump(exclude_none=True))
         except ValidationError as e:
             print(f"Validation error for record {data}: {e}")
-    print(f"Processed {len(processed_records)} price records for price_region_id {price_region_id}.")
-    return processed_records
+    
+    # Deduplicate records based on (price_region_id, time) combination
+    # Keep the first occurrence of each unique combination
+    seen_keys = set()
+    deduplicated_records: List[Dict[str, Any]] = []
+    duplicates_removed = 0
+    
+    for record in processed_records:
+        time_obj: datetime = record["time"]
+        # Normalize the time component of the key to ensure robust deduplication
+        # Uses (year, month, day, hour, minute, second) tuple from the UTC datetime
+        normalized_time_key_tuple = (
+            time_obj.year, 
+            time_obj.month, 
+            time_obj.day,
+            time_obj.hour, 
+            time_obj.minute, 
+            time_obj.second
+        )
+        key = (record["price_region_id"], normalized_time_key_tuple)
+        
+        if key not in seen_keys:
+            seen_keys.add(key)
+            deduplicated_records.append(record)
+        else:
+            duplicates_removed += 1
+    
+    if duplicates_removed > 0:
+        print(f"Removed {duplicates_removed} duplicate records for price_region_id {price_region_id}")
+    
+    print(f"Processed {len(deduplicated_records)} unique price records for price_region_id {price_region_id}.")
+    return deduplicated_records
 
 async def _make_entsoe_request(
         base_url: str,
