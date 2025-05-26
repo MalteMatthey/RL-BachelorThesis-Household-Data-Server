@@ -80,7 +80,7 @@ async def fetch_simulated_pv_data(
                 all_pv_results.append({
                     "household_id": household_id,
                     "time": timestamp.astimezone(timezone.utc),
-                    "generation_kwh": max(0, generation)  # Ensure non-negative
+                    "generation_kwh": round(max(0, generation), 5)  # Ensure non-negative and round to 5 decimals
                 })
                 
         except Exception as e:

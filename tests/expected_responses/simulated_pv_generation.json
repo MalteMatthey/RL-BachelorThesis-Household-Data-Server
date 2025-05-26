@@ -47,172 +47,172 @@
     {
         "time": "2024-01-01T07:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.00023427940193909965
+        "generation_kwh": 0.00023
     },
     {
         "time": "2024-01-01T07:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.024847561867606793
+        "generation_kwh": 0.02485
     },
     {
         "time": "2024-01-01T07:45:00Z",
         "household_id": 2,
-        "generation_kwh": 0.09817127203199456
+        "generation_kwh": 0.09817
     },
     {
         "time": "2024-01-01T08:00:00Z",
         "household_id": 2,
-        "generation_kwh": 0.17090514473763938
+        "generation_kwh": 0.17091
     },
     {
         "time": "2024-01-01T08:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.23322681002027454
+        "generation_kwh": 0.23323
     },
     {
         "time": "2024-01-01T08:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.1431672417617743
+        "generation_kwh": 0.14317
     },
     {
         "time": "2024-01-01T08:45:00Z",
         "household_id": 2,
-        "generation_kwh": 0.12158102474477156
+        "generation_kwh": 0.12158
     },
     {
         "time": "2024-01-01T09:00:00Z",
         "household_id": 2,
-        "generation_kwh": 0.2041486794160981
+        "generation_kwh": 0.20415
     },
     {
         "time": "2024-01-01T09:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.3919131776068093
+        "generation_kwh": 0.39191
     },
     {
         "time": "2024-01-01T09:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.32868517920913615
+        "generation_kwh": 0.32869
     },
     {
         "time": "2024-01-01T09:45:00Z",
         "household_id": 2,
-        "generation_kwh": 0.19858779246071892
+        "generation_kwh": 0.19859
     },
     {
         "time": "2024-01-01T10:00:00Z",
         "household_id": 2,
-        "generation_kwh": 0.10881064092933389
+        "generation_kwh": 0.10881
     },
     {
         "time": "2024-01-01T10:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.2337949260332676
+        "generation_kwh": 0.23379
     },
     {
         "time": "2024-01-01T10:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.2990491323485001
+        "generation_kwh": 0.29905
     },
     {
         "time": "2024-01-01T10:45:00Z",
         "household_id": 2,
-        "generation_kwh": 0.3300707204157841
+        "generation_kwh": 0.33007
     },
     {
         "time": "2024-01-01T11:00:00Z",
         "household_id": 2,
-        "generation_kwh": 0.39373167101352485
+        "generation_kwh": 0.39373
     },
     {
         "time": "2024-01-01T11:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.32282339779036545
+        "generation_kwh": 0.32282
     },
     {
         "time": "2024-01-01T11:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.15590211160281983
+        "generation_kwh": 0.1559
     },
     {
         "time": "2024-01-01T11:45:00Z",
         "household_id": 2,
-        "generation_kwh": 0.12168150368691828
+        "generation_kwh": 0.12168
     },
     {
         "time": "2024-01-01T12:00:00Z",
         "household_id": 2,
-        "generation_kwh": 0.19263119474670568
+        "generation_kwh": 0.19263
     },
     {
         "time": "2024-01-01T12:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.20127510449464953
+        "generation_kwh": 0.20128
     },
     {
         "time": "2024-01-01T12:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.1985159229818032
+        "generation_kwh": 0.19852
     },
     {
         "time": "2024-01-01T12:45:00Z",
         "household_id": 2,
-        "generation_kwh": 0.24844848596542113
+        "generation_kwh": 0.24845
     },
     {
         "time": "2024-01-01T13:00:00Z",
         "household_id": 2,
-        "generation_kwh": 0.2400543149225735
+        "generation_kwh": 0.24005
     },
     {
         "time": "2024-01-01T13:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.24400598680343508
+        "generation_kwh": 0.24401
     },
     {
         "time": "2024-01-01T13:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.19560520255414696
+        "generation_kwh": 0.19561
     },
     {
         "time": "2024-01-01T13:45:00Z",
         "household_id": 2,
-        "generation_kwh": 0.15576033284894097
+        "generation_kwh": 0.15576
     },
     {
         "time": "2024-01-01T14:00:00Z",
         "household_id": 2,
-        "generation_kwh": 0.12438002460571494
+        "generation_kwh": 0.12438
     },
     {
         "time": "2024-01-01T14:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.08912211695036729
+        "generation_kwh": 0.08912
     },
     {
         "time": "2024-01-01T14:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.08955118951528239
+        "generation_kwh": 0.08955
     },
     {
         "time": "2024-01-01T14:45:00Z",
         "household_id": 2,
-        "generation_kwh": 0.13938548322476127
+        "generation_kwh": 0.13939
     },
     {
         "time": "2024-01-01T15:00:00Z",
         "household_id": 2,
-        "generation_kwh": 0.10262856464433509
+        "generation_kwh": 0.10263
     },
     {
         "time": "2024-01-01T15:15:00Z",
         "household_id": 2,
-        "generation_kwh": 0.02803585905134681
+        "generation_kwh": 0.02804
     },
     {
         "time": "2024-01-01T15:30:00Z",
         "household_id": 2,
-        "generation_kwh": 0.0001459432374238406
+        "generation_kwh": 0.00015
     },
     {
         "time": "2024-01-01T15:45:00Z",
