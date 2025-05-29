@@ -15,7 +15,7 @@ async def fetch_weather_data_from_db(
     
     try:
         obs_query = """
-        SELECT datetime as time, temp as temp_air, windspeed as wind_speed
+        SELECT datetime as time, temp as temp_air, windspeed as wind_speed, snowdepth as snow_depth, snow as snowfall
         FROM weather_observations
         WHERE location_id = :location_id 
         AND datetime >= :start_time 
@@ -77,12 +77,16 @@ def combine_irradiation_and_weather_data(
         # Propagate hourly weather values to all timestamps within the hour
         combined_data['temp_air'] = combined_data['temp_air'].ffill()
         combined_data['wind_speed'] = combined_data['wind_speed'].ffill()
+        combined_data['snow_depth'] = combined_data['snow_depth'].ffill()
+        combined_data['snowfall'] = combined_data['snowfall'].ffill()
 
         # Count how many values were successfully joined
         temp_count = combined_data['temp_air'].notna().sum()
         wind_count = combined_data['wind_speed'].notna().sum()
+        snow_depth_count = combined_data['snow_depth'].notna().sum()
+        snowfall_count = combined_data['snowfall'].notna().sum()
         total_count = len(combined_data)
-        print(f"Combined data: {temp_count}/{total_count} temperature values, {wind_count}/{total_count} wind speed values")
+        print(f"Combined data: {temp_count}/{total_count} temperature values, {wind_count}/{total_count} wind speed values, {snow_depth_count}/{total_count} snow depth values, {snowfall_count}/{total_count} snowfall values")
     else:
         print("No weather data available from database")
 

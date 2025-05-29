@@ -9,6 +9,7 @@ import tempfile
 from .b2_backup import b2_handler
 from ..helpers.pv_simulation import calculate_pv_generation
 from ..helpers.weather_data_fetcher import fetch_weather_data_from_db, combine_irradiation_and_weather_data
+from ..helpers.elevation_helper import get_altitude_from_coordinates
 from api.db import database as app_db
 
 # --- Configuration ---
@@ -37,6 +38,11 @@ async def fetch_simulated_pv_data(
             if not household_data:
                 print(f"No data found for household {household_id}")
                 continue
+              # Get altitude for the household's location
+            altitude = await get_altitude_from_coordinates(
+                household_data['latitude'], 
+                household_data['longitude']
+            )
                 
             # Fetch CAMS irradiation data for this household's location
             irradiation_data = await _fetch_cams_irradiation_data(
@@ -62,7 +68,7 @@ async def fetch_simulated_pv_data(
             ac_power = calculate_pv_generation(
                 latitude=household_data['latitude'],
                 longitude=household_data['longitude'],
-                altitude=110,  # Default altitude for pvlib calculation
+                altitude=altitude,
                 tilt=household_data['pv_tilt'],
                 azimuth=household_data['pv_azimuth'],
                 capacity_kw=household_data['pv_capacity_kw'],
