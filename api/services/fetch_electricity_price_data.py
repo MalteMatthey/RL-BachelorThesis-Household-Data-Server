@@ -154,7 +154,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
         except ValidationError as e:
             print(f"Validation error for record {data}: {e}")
     
-    # Deduplicate records based on (price_region_id, time) combination
+    # Deduplicate records as safety measure (should be minimal after hourly filtering)
     # Keep the first occurrence of each unique combination
     seen_keys = set()
     deduplicated_records: List[Dict[str, Any]] = []
