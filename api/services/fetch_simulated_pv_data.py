@@ -8,7 +8,7 @@ import tempfile
 
 from .b2_backup import b2_handler
 from ..helpers.pv_simulation import calculate_pv_generation
-from ..helpers.weather_data_fetcher import fetch_weather_data_from_db, combine_irradiation_and_weather_data
+from ..helpers.weather_data_fetcher_from_db import fetch_weather_data_from_db, combine_irradiation_and_weather_data
 from ..helpers.elevation_helper import get_altitude_from_coordinates
 from api.db import database as app_db
 
