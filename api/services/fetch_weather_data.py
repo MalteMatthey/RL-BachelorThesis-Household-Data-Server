@@ -1,6 +1,7 @@
 import os
 import httpx
 import json
+import asyncio
 from datetime import datetime, timedelta, timezone, date
 from typing import List, Dict, Any, Tuple, Optional, Type
 
@@ -10,6 +11,9 @@ from ..schemas import WeatherObservationIn, WeatherForecastIn
 from .b2_backup import b2_handler
 
 # --- Configuration ---
+
+# Semaphore to limit concurrent Visual Crossing API calls to 1
+_api_semaphore = asyncio.Semaphore(1)
 
 # Environment variable for API key is best practice
 API_KEY = os.getenv("VISUAL_CROSSING_API_KEY")
@@ -74,6 +78,9 @@ async def _make_visual_crossing_request(
     Makes a GET request to the Visual Crossing API, checking B2 backup first.
     Handles common HTTP errors, saves successful responses to B2,
     and returns the parsed JSON response.
+    
+    This function is protected by a semaphore to ensure only one concurrent
+    API call to Visual Crossing is made at a time.
 
     Args:
         url: The API endpoint URL.
@@ -97,35 +104,37 @@ async def _make_visual_crossing_request(
             print(f"Failed to retrieve or parse backup {backup_filename}. Proceeding with live API call.")
 
     # --- Proceed with Live API Call ---
-    request_params = params.copy()
-    # Ensure API key is included in the request parameters (not earlier to keep filenames for backup consistent)
-    request_params["key"] = API_KEY
+    # Acquire semaphore to ensure only one concurrent API call
+    async with _api_semaphore:
+        request_params = params.copy()
+        # Ensure API key is included in the request parameters (not earlier to keep filenames for backup consistent)
+        request_params["key"] = API_KEY
 
-    async with httpx.AsyncClient() as client:
-        try:
-            # print(f"Making live API request to: {url} with params affecting request: {request_params}")
-            response = await client.get(url, params=request_params, timeout=timeout)
-            response.raise_for_status()  # Raises HTTPStatusError for 4xx/5xx responses
+        async with httpx.AsyncClient() as client:
+            try:
+                # print(f"Making live API request to: {url} with params affecting request: {request_params}")
+                response = await client.get(url, params=request_params, timeout=timeout)
+                response.raise_for_status()  # Raises HTTPStatusError for 4xx/5xx responses
 
-            # --- Save Successful Response to B2 ---
-            # Use the original params (without API key) for saving
-            await b2_handler.save_backup(url, params_for_backup_check, response.content)
+                # --- Save Successful Response to B2 ---
+                # Use the original params (without API key) for saving
+                await b2_handler.save_backup(url, params_for_backup_check, response.content)
 
-            # Return parsed JSON from the live response
-            return response.json()
+                # Return parsed JSON from the live response
+                return response.json()
 
-        except httpx.RequestError as exc:
-            print(f"Network error requesting {exc.request.url!r}: {exc}")
-            return None
-        except httpx.HTTPStatusError as exc:
-            print(f"HTTP error {exc.response.status_code} for {exc.request.url!r}: {exc.response.text}")
-            return None
-        except json.JSONDecodeError as e:
-            print(f"Error decoding JSON from live API response for {url}: {e}")
-            return None
-        except Exception as e:
-            print(f"An unexpected error occurred during API request/processing: {e}")
-            return None
+            except httpx.RequestError as exc:
+                print(f"Network error requesting {exc.request.url!r}: {exc}")
+                return None
+            except httpx.HTTPStatusError as exc:
+                print(f"HTTP error {exc.response.status_code} for {exc.request.url!r}: {exc.response.text}")
+                return None
+            except json.JSONDecodeError as e:
+                print(f"Error decoding JSON from live API response for {url}: {e}")
+                return None
+            except Exception as e:
+                print(f"An unexpected error occurred during API request/processing: {e}")
+                return None
 
 
 # --- Data Processing Helpers ---
@@ -343,6 +352,7 @@ async def fetch_external_weather_forecasts(
 
     while current_date <= end_date:
         forecast_basis_date = current_date
+        forecast_basis_date_str = forecast_basis_date.strftime(_DATE_FORMAT)
         # Forecast run time is typically considered the start of the day (00:00 UTC)
         forecast_run_time = datetime.combine(forecast_basis_date, datetime.min.time(), tzinfo=timezone.utc)
 
@@ -353,7 +363,6 @@ async def fetch_external_weather_forecasts(
             current_date += timedelta(days=1)
             continue
 
-        forecast_basis_date_str = forecast_basis_date.strftime(_DATE_FORMAT)
         print(f"\n--- Fetching forecast run based on date: {forecast_basis_date_str} ---")
 
         # 1. Build Request Details for this specific forecast run
@@ -387,7 +396,7 @@ async def fetch_external_weather_forecasts(
         # Move to the next day's forecast run
         current_date += timedelta(days=1)
 
-    print(f"\n===\nFinished fetching forecasts.")
+    print("\n===\nFinished fetching forecasts.")
     print(
         f"Total processed forecast records for location {location_id} across all runs: {len(all_aggregated_forecasts)}")
     return all_aggregated_forecasts
