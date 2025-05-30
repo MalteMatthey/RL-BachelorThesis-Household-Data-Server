@@ -3,7 +3,7 @@ import pandas as pd
 import pvlib
 import cdsapi
 from datetime import datetime, timezone, timedelta
-from typing import Set, List, Dict, Any, Optional
+from typing import Set, List, Dict, Any, Optional, Tuple
 import tempfile
 
 from .b2_backup import b2_handler
@@ -15,30 +15,33 @@ from api.db import database as app_db
 # --- Configuration ---
 CAMS_DATASET = "cams-solar-radiation-timeseries"
 
-async def fetch_simulated_pv_data(
-    household_ids: Set[int],
-    start_time: datetime,
-    end_time: datetime
+async def fetch_simulated_pv_data_per_household(
+    household_time_ranges: Dict[int, Tuple[datetime, datetime]]
 ) -> List[Dict[str, Any]]:
     """
-    Fetch simulated PV data for given households and time range.
+    Fetch simulated PV data for given households with individual time ranges.
+    Each household can have a different start and end time.
     Uses CAMS for irradiation data and pvlib for simulation.
     """
-    print(f"Starting PV data simulation for households {household_ids} from {start_time} to {end_time}")
-    # Ensure timezone-aware datetimes
-    start_utc = start_time.astimezone(timezone.utc) if start_time.tzinfo else start_time.replace(tzinfo=timezone.utc)
-    end_utc = end_time.astimezone(timezone.utc) if end_time.tzinfo else end_time.replace(tzinfo=timezone.utc)
-
+    print(f"Starting PV data simulation for {len(household_time_ranges)} households with individual time ranges")
+    
     all_pv_results: List[Dict[str, Any]] = []
 
-    for household_id in household_ids:
+    for household_id, (start_time, end_time) in household_time_ranges.items():
+        print(f"Simulating PV for household {household_id} from {start_time} to {end_time}")
+        
+        # Ensure timezone-aware datetimes
+        start_utc = start_time.astimezone(timezone.utc) if start_time.tzinfo else start_time.replace(tzinfo=timezone.utc)
+        end_utc = end_time.astimezone(timezone.utc) if end_time.tzinfo else end_time.replace(tzinfo=timezone.utc)
+        
         try:
             household_data = await _get_household_with_location(household_id)
             
             if not household_data:
                 print(f"No data found for household {household_id}")
                 continue
-              # Get altitude for the household's location
+                
+            # Get altitude for the household's location
             altitude = await get_altitude_from_coordinates(
                 household_data['latitude'], 
                 household_data['longitude']
@@ -53,17 +56,17 @@ async def fetch_simulated_pv_data(
             )
             
             if irradiation_data is None or irradiation_data.empty:
-                print(f"No irradiation data available for household {household_id} at location {household_data['location_name']}")
+                print(f"No irradiation data available for household {household_id}")
                 continue
-                  # Fetch actual weather data (temperature and wind speed) from database
+            # Fetch actual weather data (temperature and wind speed) from database
             weather_data = await fetch_weather_data_from_db(
                 location_id=household_data['location_id'],
                 start_time=start_utc,
                 end_time=end_utc
             )
+            
             # Combine irradiation data with weather data
             combined_weather_data = combine_irradiation_and_weather_data(irradiation_data, weather_data)
-            
             # Calculate PV generation for this household
             ac_power = calculate_pv_generation(
                 latitude=household_data['latitude'],
@@ -96,7 +99,7 @@ async def fetch_simulated_pv_data(
     # Sort results by time and household_id
     all_pv_results.sort(key=lambda x: (x['time'], x['household_id']))
     
-    print(f"Finished PV data simulation. Generated {len(all_pv_results)} records.")
+    print(f"Finished PV data simulation. Generated {len(all_pv_results)} records for individual households.")
     return all_pv_results
 
 

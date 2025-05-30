@@ -10,7 +10,7 @@ from math import floor
 import api.db as db
 from api.db import database
 from api.schemas import BulkPV, BulkLoad
-from api.services.fetch_simulated_pv_data import fetch_simulated_pv_data
+from api.services.fetch_simulated_pv_data import fetch_simulated_pv_data_per_household
 from api.services.fetch_electricity_price_data import fetch_external_electricity_prices
 from api.services.fetch_weather_data import fetch_external_weather_observations, fetch_external_weather_forecasts
 
@@ -118,21 +118,22 @@ def _calculate_overlap(
 
 
 async def _fetch_external_data(
-        location_ids: Set[int], price_region_ids: Set[int],
-        start_time: datetime, end_time: datetime
+        location_time_ranges: Dict[int, Tuple[datetime, datetime]],
+        price_region_ids: Set[int],
+        price_start_time: datetime,
+        price_end_time: datetime
 ) -> Tuple[List[Dict], List[Dict], List[Dict]]:
     """
-    Fetches weather and price data for the unique location/region IDs
-    relevant to the current batch of ingested data, within the specified time range.
-    A batch might contain households from multiple locations/regions.
+    Fetches weather and price data for the relevant location/region IDs.
+    Weather data is fetched per location with individual time ranges.
+    Price data is fetched per region with the global time range.
     """
     weather_obs_to_insert: List[Dict] = []
     weather_fc_to_insert: List[Dict] = []
     prices_to_insert: List[Dict] = []
 
-    # Fetch weather data once for each unique location ID present in the batch.
-    # This avoids redundant calls if multiple households share the same location.
-    for loc_id in location_ids:
+    # Fetch weather data once for each unique location ID with its specific time range
+    for loc_id, (start_time, end_time) in location_time_ranges.items():
         # Get longitude and latitude from the location ID
         query = select(db.locations_tbl.c.latitude, db.locations_tbl.c.longitude).where(
             db.locations_tbl.c.location_id == loc_id)
@@ -153,8 +154,8 @@ async def _fetch_external_data(
     # Fetch price data once for each unique region ID present in the batch.
     # This avoids redundant calls if multiple locations share the same region.
     for reg_id in price_region_ids:
-        print(f"Fetching electricity prices for region {reg_id} from {start_time} to {end_time}")
-        price_data = await fetch_external_electricity_prices(reg_id, start_time, end_time)
+        print(f"Fetching electricity prices for region {reg_id} from {price_start_time} to {price_end_time}")
+        price_data = await fetch_external_electricity_prices(reg_id, price_start_time, price_end_time)
         prices_to_insert.extend(price_data)
 
     return weather_obs_to_insert, weather_fc_to_insert, prices_to_insert
@@ -228,6 +229,56 @@ async def _insert_records(
     print(f"Successfully processed {processed_total} {label} records.")
 
 
+def _calculate_household_time_ranges(records: List[Dict]) -> Dict[int, Tuple[datetime, datetime]]:
+    """
+    Calculate individual time ranges for each household from the records.
+    Returns a dictionary mapping household_id to (min_time, max_time) for that household.
+    """
+    household_time_ranges = {}
+    
+    for record in records:
+        household_id = record['household_id']
+        time = record['time']
+        
+        if household_id not in household_time_ranges:
+            household_time_ranges[household_id] = [time, time]
+        else:
+            current_min, current_max = household_time_ranges[household_id]
+            household_time_ranges[household_id] = [
+                min(current_min, time),
+                max(current_max, time)
+            ]
+    
+    # Convert lists to tuples
+    return {hid: (min_time, max_time) for hid, (min_time, max_time) in household_time_ranges.items()}
+
+
+def _calculate_location_time_ranges(
+    household_time_ranges: Dict[int, Tuple[datetime, datetime]],
+    household_to_location: Dict[int, int]
+) -> Dict[int, Tuple[datetime, datetime]]:
+    """
+    Calculate time ranges for each location based on households at that location.
+    Returns a dictionary mapping location_id to (min_time, max_time) for that location.
+    """
+    location_time_ranges = {}
+    
+    for household_id, (start_time, end_time) in household_time_ranges.items():
+        location_id = household_to_location[household_id]
+        
+        if location_id not in location_time_ranges:
+            location_time_ranges[location_id] = [start_time, end_time]
+        else:
+            current_min, current_max = location_time_ranges[location_id]
+            location_time_ranges[location_id] = [
+                min(current_min, start_time),
+                max(current_max, end_time)
+            ]
+    
+    # Convert lists to tuples
+    return {loc_id: (min_time, max_time) for loc_id, (min_time, max_time) in location_time_ranges.items()}
+
+
 async def _handle_ingestion(
         records: List[Dict],
         primary_table: Table,
@@ -247,15 +298,25 @@ async def _handle_ingestion(
     max_incoming_time: datetime = max(r['time'] for r in records)
 
     # Get metadata: household->location mapping, and UNIQUE location/region IDs for this batch
-    _, unique_location_ids, unique_price_region_ids = await _get_household_metadata(household_ids)
+    household_to_location, unique_location_ids, unique_price_region_ids = await _get_household_metadata(household_ids)
 
     # Simulation mode: fetch and insert weather/prices before simulating PV
     if record_type == "load" and simulate_pv_generation:
+        # Calculate individual time ranges for each household
+        household_time_ranges = _calculate_household_time_ranges(records)
+        
+        # Calculate location-specific time ranges based on households at each location
+        location_time_ranges = _calculate_location_time_ranges(household_time_ranges, household_to_location)
+          # For price data, use the overall min/max since prices are per region, not per location
         min_fetch_time = min_incoming_time
         max_fetch_time = max_incoming_time
-        print(f"Fetching external weather and price data for simulation period: {min_fetch_time} to {max_fetch_time}")
+        
+        print("Fetching external weather and price data for simulation period:")
+        print("  - Weather data per location with individual time ranges")
+        print(f"  - Price data for overall period: {min_fetch_time} to {max_fetch_time}")
+        
         weather_obs, weather_fc, prices = await _fetch_external_data(
-            unique_location_ids, unique_price_region_ids, min_fetch_time, max_fetch_time
+            location_time_ranges, unique_price_region_ids, min_fetch_time, max_fetch_time
         )
         async with database.transaction():
             # insert load data
@@ -267,8 +328,8 @@ async def _handle_ingestion(
             await _insert_records(weather_fc, db.weather_fc_tbl, "weather forecast", unique_keys=["location_id", "forecast_run", "target_time"])
             await _insert_records(prices, db.price_tbl, "electricity price", unique_keys=["price_region_id", "time"])
 
-            # simulate PV now that weather is in DB
-            simulated = await fetch_simulated_pv_data(household_ids, min_fetch_time, max_fetch_time)
+            # simulate PV for each household with its individual time range
+            simulated = await fetch_simulated_pv_data_per_household(household_time_ranges)
             await _insert_records(simulated, db.pv_tbl, "simulated PV", unique_keys=["household_id", "time"])
         return {
             f"inserted_{record_type}": len(records),
@@ -279,7 +340,11 @@ async def _handle_ingestion(
             "detail": "Load data ingested and PV simulated using fetched weather."
         }
 
-    # Get time range of existing data in the *other* table
+    # Non-simulation mode: calculate overlap with existing data
+    # Calculate individual time ranges for each household from incoming records
+    household_time_ranges = _calculate_household_time_ranges(records)
+    
+    # Get time range of existing data in the *other* table for each household
     min_secondary_time, max_secondary_time = await _get_existing_time_range(secondary_table, household_ids)
 
     # Calculate overlap between incoming data and existing secondary data
@@ -292,12 +357,33 @@ async def _handle_ingestion(
     weather_fc_to_insert: List[Dict] = []
     prices_to_insert: List[Dict] = []
 
-    # Non-simulation mode:
     if min_fetch_time and max_fetch_time:
-        print(f"Overlap detected. Fetching external data from {min_fetch_time} to {max_fetch_time}")
-        weather_obs_to_insert, weather_fc_to_insert, prices_to_insert = await _fetch_external_data(
-            unique_location_ids, unique_price_region_ids, min_fetch_time, max_fetch_time
-        )
+        print(f"Overlap detected. Fetching external data for overlap period: {min_fetch_time} to {max_fetch_time}")
+        
+        # For weather data, only fetch for the overlapping period for each location
+        # Filter household time ranges to only include the overlap period
+        overlap_household_time_ranges = {}
+        for household_id, (household_start, household_end) in household_time_ranges.items():
+            # Calculate overlap for this specific household
+            household_overlap_start, household_overlap_end = _calculate_overlap(
+                household_start, household_end,
+                min_secondary_time, max_secondary_time
+            )
+            if household_overlap_start and household_overlap_end:
+                overlap_household_time_ranges[household_id] = (household_overlap_start, household_overlap_end)
+        
+        if overlap_household_time_ranges:
+            # Calculate location time ranges for the overlap period only
+            overlap_location_time_ranges = _calculate_location_time_ranges(
+                overlap_household_time_ranges, household_to_location
+            )
+            
+            print(f"Fetching weather data for {len(overlap_location_time_ranges)} locations with individual overlap periods")
+            weather_obs_to_insert, weather_fc_to_insert, prices_to_insert = await _fetch_external_data(
+                overlap_location_time_ranges, unique_price_region_ids, min_fetch_time, max_fetch_time
+            )
+        else:
+            print("No household-level overlap found, skipping weather data fetch")
     else:
         print(f"No time overlap found with existing {secondary_table.name} data for these households, and not simulating PV. Skipping external data fetch.")
 
