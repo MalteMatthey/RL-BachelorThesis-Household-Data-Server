@@ -76,6 +76,7 @@ class PriceIn(BaseModel):
     price_region_id: int
     price_eur_mwh: float
     calculated_price_eur_mwh: Optional[float] = None
+    calculated_feed_in_eur_mwh: Optional[float] = None
 
 
 class PriceRegionIn(BaseModel):
@@ -97,6 +98,7 @@ class HouseholdIn(BaseModel):
     location_id: int
     name: str
     enduser_price_formula: str
+    enduser_feed_in_formula: str
     pv_tilt: float
     pv_azimuth: float
     pv_capacity_kw: float
@@ -167,6 +169,7 @@ class RLAgentStateData(BaseModel):
     # Price related fields
     raw_price_eur_mwh: Optional[float] = None
     calculated_price_eur_mwh: Optional[float] = None
+    calculated_feed_in_eur_mwh: Optional[float] = None
 
     # PV related fields
     pv_generation_kwh: Optional[float] = None
