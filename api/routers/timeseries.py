@@ -100,18 +100,27 @@ async def _get_calculated_household_prices(household_id: int, start: datetime, e
 
     processed_prices = []
     for record in raw_price_records:
-        calculated_value = calculate_price_with_formula(
+        calculated_price_value = calculate_price_with_formula(
             household.enduser_price_formula,
             record.price_eur_mwh
         )
         # Round the calculated price to 2 decimal places
-        calculated_value = round(calculated_value, 2)
+        calculated_price_value = round(calculated_price_value, 2)
+        
+        calculated_feed_in_value = calculate_price_with_formula(
+            household.enduser_feed_in_formula,
+            record.price_eur_mwh
+        )
+        # Round the calculated feed-in price to 2 decimal places
+        calculated_feed_in_value = round(calculated_feed_in_value, 2)
+        
         processed_prices.append(
             PriceIn(
                 time=record.time,
                 price_region_id=record.price_region_id,
                 price_eur_mwh=record.price_eur_mwh,
-                calculated_price_eur_mwh=calculated_value
+                calculated_price_eur_mwh=calculated_price_value,
+                calculated_feed_in_eur_mwh=calculated_feed_in_value
             )
         )
     return processed_prices

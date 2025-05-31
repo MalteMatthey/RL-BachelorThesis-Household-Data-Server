@@ -40,6 +40,7 @@ HOUSEHOLD_PAYLOAD_1 = {
     # location_id will be set dynamically
     "name": "Household1Loc1",
     "enduser_price_formula": "price * 1.19 + 0.5",
+    "enduser_feed_in_formula": "price * 0.8",
     "pv_tilt": 30,
     "pv_azimuth": 180,
     "pv_capacity_kw": 50,
@@ -55,6 +56,7 @@ HOUSEHOLD_PAYLOAD_2 = {
     # location_id will be set dynamically
     "name": "Household1Loc2",
     "enduser_price_formula": "price * 1.1",
+    "enduser_feed_in_formula": "price * 0.75",
     "pv_tilt": 30,
     "pv_azimuth": 180,
     "pv_capacity_kw": 5,
@@ -331,6 +333,7 @@ def test_create_household_1(http_client, base_url):
     assert response_data["name"] == HOUSEHOLD_PAYLOAD_1["name"]
     assert response_data["location_id"] == HOUSEHOLD_PAYLOAD_1["location_id"]
     assert response_data.get("enduser_price_formula") == HOUSEHOLD_PAYLOAD_1["enduser_price_formula"]
+    assert response_data.get("enduser_feed_in_formula") == HOUSEHOLD_PAYLOAD_1["enduser_feed_in_formula"]
     assert response_data["pv_tilt"] == HOUSEHOLD_PAYLOAD_1["pv_tilt"]
     assert response_data["pv_azimuth"] == HOUSEHOLD_PAYLOAD_1["pv_azimuth"]
     assert response_data["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_1["pv_capacity_kw"]
@@ -357,6 +360,7 @@ def test_create_household_2(http_client, base_url):
     assert response_data["name"] == HOUSEHOLD_PAYLOAD_2["name"]
     assert response_data["location_id"] == HOUSEHOLD_PAYLOAD_2["location_id"]
     assert response_data["enduser_price_formula"] == HOUSEHOLD_PAYLOAD_2["enduser_price_formula"]
+    assert response_data["enduser_feed_in_formula"] == HOUSEHOLD_PAYLOAD_2["enduser_feed_in_formula"]
     assert response_data["pv_tilt"] == HOUSEHOLD_PAYLOAD_2["pv_tilt"]
     assert response_data["pv_azimuth"] == HOUSEHOLD_PAYLOAD_2["pv_azimuth"]
     assert response_data["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_2["pv_capacity_kw"]
@@ -377,6 +381,7 @@ def test_create_household_with_non_existent_location(http_client, base_url):
         "location_id": non_existent_location_id,
         "name": "HouseholdWithInvalidLocation",
         "enduser_price_formula": "price * 1.0",
+        "enduser_feed_in_formula": "price * 0.5",
         "pv_tilt": 30,
         "pv_azimuth": 180,
         "pv_capacity_kw": 5,
@@ -401,6 +406,7 @@ def test_create_household_with_invalid_formula(http_client, base_url):
         "location_id": created_location_id_1,
         "name": "HouseholdWithInvalidFormulaVar",
         "enduser_price_formula": "price * x + 0.5",
+        "enduser_feed_in_formula": "price * 0.8",
         "pv_tilt": 30,
         "pv_azimuth": 180,
         "pv_capacity_kw": 5,
@@ -429,6 +435,7 @@ def test_get_specific_household_1(http_client, base_url):
     assert response_data["name"] == HOUSEHOLD_PAYLOAD_1["name"]
     assert response_data["location_id"] == HOUSEHOLD_PAYLOAD_1["location_id"]
     assert response_data["enduser_price_formula"] == HOUSEHOLD_PAYLOAD_1["enduser_price_formula"]
+    assert response_data["enduser_feed_in_formula"] == HOUSEHOLD_PAYLOAD_1["enduser_feed_in_formula"]
     assert response_data["pv_tilt"] == HOUSEHOLD_PAYLOAD_1["pv_tilt"]
     assert response_data["pv_azimuth"] == HOUSEHOLD_PAYLOAD_1["pv_azimuth"]
     assert response_data["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_1["pv_capacity_kw"]
@@ -461,6 +468,7 @@ def test_get_all_households(http_client, base_url):
             assert hh["name"] == HOUSEHOLD_PAYLOAD_1["name"]
             assert hh["location_id"] == HOUSEHOLD_PAYLOAD_1["location_id"]
             assert hh["enduser_price_formula"] == HOUSEHOLD_PAYLOAD_1["enduser_price_formula"]
+            assert hh["enduser_feed_in_formula"] == HOUSEHOLD_PAYLOAD_1["enduser_feed_in_formula"]
             assert hh["pv_tilt"] == HOUSEHOLD_PAYLOAD_1["pv_tilt"]
             assert hh["pv_azimuth"] == HOUSEHOLD_PAYLOAD_1["pv_azimuth"]
             assert hh["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_1["pv_capacity_kw"]
@@ -475,6 +483,7 @@ def test_get_all_households(http_client, base_url):
             assert hh["name"] == HOUSEHOLD_PAYLOAD_2["name"]
             assert hh["location_id"] == HOUSEHOLD_PAYLOAD_2["location_id"]
             assert hh["enduser_price_formula"] == HOUSEHOLD_PAYLOAD_2["enduser_price_formula"]
+            assert hh["enduser_feed_in_formula"] == HOUSEHOLD_PAYLOAD_2["enduser_feed_in_formula"]
             assert hh["pv_tilt"] == HOUSEHOLD_PAYLOAD_2["pv_tilt"]
             assert hh["pv_azimuth"] == HOUSEHOLD_PAYLOAD_2["pv_azimuth"]
             assert hh["pv_capacity_kw"] == HOUSEHOLD_PAYLOAD_2["pv_capacity_kw"]

@@ -153,6 +153,13 @@ async def create_household(household: HouseholdIn):
             detail=f"Invalid formula: {household.enduser_price_formula}"
         )
 
+    # Verify the enduser_feed_in_formula
+    if household.enduser_feed_in_formula and not verify_formula(household.enduser_feed_in_formula):
+        raise HTTPException(
+            status_code=400,
+            detail=f"Invalid feed-in formula: {household.enduser_feed_in_formula}"
+        )    
+    
     # Insert household and return the created record
     query = (
         insert(db.households_tbl)
@@ -160,6 +167,7 @@ async def create_household(household: HouseholdIn):
             location_id=household.location_id,
             name=household.name,
             enduser_price_formula=household.enduser_price_formula,
+            enduser_feed_in_formula=household.enduser_feed_in_formula,
             pv_tilt=household.pv_tilt,
             pv_azimuth=household.pv_azimuth,
             pv_capacity_kw=household.pv_capacity_kw,
@@ -176,6 +184,7 @@ async def create_household(household: HouseholdIn):
             db.households_tbl.c.location_id,
             db.households_tbl.c.name,
             db.households_tbl.c.enduser_price_formula,
+            db.households_tbl.c.enduser_feed_in_formula,
             db.households_tbl.c.pv_tilt,
             db.households_tbl.c.pv_azimuth,
             db.households_tbl.c.pv_capacity_kw,

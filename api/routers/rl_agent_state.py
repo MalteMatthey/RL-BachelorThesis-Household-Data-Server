@@ -35,6 +35,10 @@ async def get_rl_agent_state(
     if fields and "calculated_price_eur_mwh" in fields:
         effective_sql_fields.add("raw_price_eur_mwh")
 
+    # If 'calculated_feed_in_eur_mwh' is requested in the API call, enforce inclusion of necessary raw price for calculation.
+    if fields and "calculated_feed_in_eur_mwh" in fields:
+        effective_sql_fields.add("raw_price_eur_mwh")
+
     # Validate household and get related IDs
     household = await database.fetch_one(
         db.households_tbl.select().where(db.households_tbl.c.household_id == household_id)
@@ -99,6 +103,18 @@ async def get_rl_agent_state(
                 data_kwargs["calculated_price_eur_mwh"] = round(calculated_price, 2)
             else:
                 data_kwargs["calculated_price_eur_mwh"] = None 
+        
+        if (fields is None) or "calculated_feed_in_eur_mwh" in fields:
+            # The raw price for calculation is fetched as "price_eur_mwh" from SQL.
+            raw_price_for_calc = r.get("price_eur_mwh") 
+            if household.enduser_feed_in_formula and raw_price_for_calc is not None:
+                calculated_feed_in = calculate_price_with_formula(
+                    household.enduser_feed_in_formula,
+                    raw_price_for_calc
+                )
+                data_kwargs["calculated_feed_in_eur_mwh"] = round(calculated_feed_in, 2)
+            else:
+                data_kwargs["calculated_feed_in_eur_mwh"] = None
         
         # copy any obs_* keys that were fetched
         for k_obs, v_obs in r.items():
