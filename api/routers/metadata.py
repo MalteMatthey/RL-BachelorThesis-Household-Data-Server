@@ -1,7 +1,7 @@
 from typing import List
 
 from fastapi import APIRouter, HTTPException, Query
-from sqlalchemy import select, insert
+from sqlalchemy import select, insert, delete
 
 import api.db as db
 from api.db import database
@@ -228,3 +228,169 @@ async def get_household(household_id: int):
         raise HTTPException(status_code=404, detail="Household not found")
 
     return HouseholdIn(**household._mapping)
+
+
+# --- Deletion Helper Functions ---
+
+async def _delete_household_data(household_ids: List[int]):
+    """Helper function to delete all data associated with households."""
+    if not household_ids:
+        return
+    
+    # Delete PV generation data
+    await database.execute(
+        delete(db.pv_tbl).where(db.pv_tbl.c.household_id.in_(household_ids))
+    )
+    
+    # Delete load data
+    await database.execute(
+        delete(db.load_tbl).where(db.load_tbl.c.household_id.in_(household_ids))
+    )
+    
+    # Delete households
+    await database.execute(
+        delete(db.households_tbl).where(db.households_tbl.c.household_id.in_(household_ids))
+    )
+
+
+async def _delete_location_data(location_ids: List[int]):
+    """Helper function to delete all data associated with locations."""
+    if not location_ids:
+        return
+    
+    # Get all households in these locations
+    households_query = select(db.households_tbl.c.household_id).where(
+        db.households_tbl.c.location_id.in_(location_ids)
+    )
+    households = await database.fetch_all(households_query)
+    household_ids = [hh['household_id'] for hh in households]
+    
+    # Delete household data
+    await _delete_household_data(household_ids)
+    
+    # Delete weather observations for these locations
+    await database.execute(
+        delete(db.weather_obs_tbl).where(db.weather_obs_tbl.c.location_id.in_(location_ids))
+    )
+    
+    # Delete weather forecasts for these locations
+    await database.execute(
+        delete(db.weather_fc_tbl).where(db.weather_fc_tbl.c.location_id.in_(location_ids))
+    )
+    
+    # Delete locations
+    await database.execute(
+        delete(db.locations_tbl).where(db.locations_tbl.c.location_id.in_(location_ids))
+    )
+
+
+# --- Deletion Endpoints ---
+
+@router.delete("/price_regions/{price_region_id}")
+async def delete_price_region(price_region_id: int):
+    """
+    Delete a price region and all its associated data.
+    This will cascade delete:
+    - All locations in this price region
+    - All households in those locations
+    - All household data (PV generation, load data)
+    - All weather observations and forecasts for those locations
+    - All electricity price data for this region
+    """
+    # Check if the price region exists
+    region_query = select(db.price_regions_tbl).where(
+        db.price_regions_tbl.c.price_region_id == price_region_id
+    )
+    region = await database.fetch_one(region_query)
+    
+    if not region:
+        raise HTTPException(status_code=404, detail="Price region not found")
+      # Get all locations in this price region
+    locations_query = select(db.locations_tbl.c.location_id).where(
+        db.locations_tbl.c.price_region_id == price_region_id
+    )
+    locations = await database.fetch_all(locations_query)
+    location_ids = [loc['location_id'] for loc in locations]
+    
+    # Delete all location data (including households and weather data)
+    await _delete_location_data(location_ids)
+    
+    # Delete electricity price data for this region
+    await database.execute(
+        delete(db.price_tbl).where(db.price_tbl.c.price_region_id == price_region_id)
+    )
+    
+    # Finally, delete the price region itself
+    await database.execute(
+        delete(db.price_regions_tbl).where(db.price_regions_tbl.c.price_region_id == price_region_id)
+    )
+    
+    return {"message": f"Price region {price_region_id} and all associated data deleted successfully"}
+
+
+@router.delete("/locations/{location_id}")
+async def delete_location(location_id: int):
+    """
+    Delete a location and all its associated data.
+    This will cascade delete:
+    - All households in this location
+    - All household data (PV generation, load data)
+    - All weather observations and forecasts for this location
+    """
+    # Check if the location exists
+    location_query = select(db.locations_tbl).where(
+        db.locations_tbl.c.location_id == location_id
+    )
+    location = await database.fetch_one(location_query)
+    
+    if not location:
+        raise HTTPException(status_code=404, detail="Location not found")
+      # Get all households in this location
+    households_query = select(db.households_tbl.c.household_id).where(
+        db.households_tbl.c.location_id == location_id
+    )
+    households = await database.fetch_all(households_query)
+    household_ids = [hh['household_id'] for hh in households]
+    
+    if household_ids:
+        # Delete household data using helper function
+        await _delete_household_data(household_ids)
+    
+    # Delete weather observations for this location
+    await database.execute(
+        delete(db.weather_obs_tbl).where(db.weather_obs_tbl.c.location_id == location_id)
+    )
+    
+    # Delete weather forecasts for this location
+    await database.execute(
+        delete(db.weather_fc_tbl).where(db.weather_fc_tbl.c.location_id == location_id)
+    )
+    
+    # Finally, delete the location itself
+    await database.execute(
+        delete(db.locations_tbl).where(db.locations_tbl.c.location_id == location_id)
+    )
+    
+    return {"message": f"Location {location_id} and all associated data deleted successfully"}
+
+
+@router.delete("/households/{household_id}")
+async def delete_household(household_id: int):
+    """
+    Delete a household and all its associated data.
+    This will delete:
+    - All PV generation data for this household
+    - All load data for this household
+    """
+    # Check if the household exists
+    household_query = select(db.households_tbl).where(
+        db.households_tbl.c.household_id == household_id
+    )
+    household = await database.fetch_one(household_query)
+    
+    if not household:
+        raise HTTPException(status_code=404, detail="Household not found")
+    # Delete household data using helper function
+    await _delete_household_data([household_id])
+    
+    return {"message": f"Household {household_id} and all associated data deleted successfully"}
