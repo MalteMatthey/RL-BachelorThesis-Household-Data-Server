@@ -23,6 +23,7 @@ CREATE TABLE households (
     location_id                INT              NOT NULL REFERENCES locations(location_id),
     name                       TEXT             NOT NULL,
     enduser_price_formula      TEXT             NOT NULL,
+    enduser_feed_in_formula    TEXT             NOT NULL,
     pv_tilt                    DOUBLE PRECISION NOT NULL,
     pv_azimuth                 DOUBLE PRECISION NOT NULL,
     pv_capacity_kw             DOUBLE PRECISION NOT NULL,
