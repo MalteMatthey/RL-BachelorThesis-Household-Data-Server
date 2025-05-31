@@ -7398,7 +7398,7 @@
         "raw_price_eur_mwh": 20.07,
         "calculated_price_eur_mwh": 24.38,
         "calculated_feed_in_eur_mwh": 16.06,
-        "pv_generation_kwh": 0.0,
+        "pv_generation_kwh": 1.2,
         "load_consumption_kwh": 2.2,
         "obs_temp": 8.0,
         "obs_tempmin": 7.2,
