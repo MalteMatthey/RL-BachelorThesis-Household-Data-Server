@@ -21,6 +21,23 @@ async def fetch_timeseries(table: Table, time_column: Column, filters: Dict[str,
     return await database.fetch_all(query)
 
 
+async def _validate_household_exists(household_id: int):
+    """Validate that a household exists in the database and return it."""
+    household_query = select(db.households_tbl).where(db.households_tbl.c.household_id == household_id)
+    household = await database.fetch_one(household_query)
+    if not household:
+        raise HTTPException(status_code=404, detail=f"Household with id {household_id} not found")
+    return household
+
+
+async def _validate_location_exists(location_id: int):
+    """Validate that a location exists in the database."""
+    location_query = select(db.locations_tbl).where(db.locations_tbl.c.location_id == location_id)
+    location = await database.fetch_one(location_query)
+    if not location:
+        raise HTTPException(status_code=404, detail=f"Location with id {location_id} not found")
+
+
 @router.get("/price", response_model=list[PriceIn], response_model_exclude_none=True)
 async def get_price(
     price_region_id: int | None = Query(None),
@@ -48,18 +65,21 @@ async def get_price(
 
 @router.get("/pv", response_model=list[PVIn])
 async def get_pv(household_id: int = Query(...), start: datetime = Query(...), end: datetime = Query(...)):
+    await _validate_household_exists(household_id)
     results = await fetch_timeseries(db.pv_tbl, db.pv_tbl.c.time, {"household_id": household_id}, start, end)
     return [PVIn(**row._mapping) for row in results]
 
 
 @router.get("/load", response_model=list[LoadIn])
 async def get_load(household_id: int = Query(...), start: datetime = Query(...), end: datetime = Query(...)):
+    await _validate_household_exists(household_id)
     results = await fetch_timeseries(db.load_tbl, db.load_tbl.c.time, {"household_id": household_id}, start, end)
     return [LoadIn(**row._mapping) for row in results]
 
 
 @router.get("/weather_obs", response_model=list[WeatherObservationIn])
 async def get_weather_obs(location_id: int = Query(...), start: datetime = Query(...), end: datetime = Query(...)):
+    await _validate_location_exists(location_id)
     results = await fetch_timeseries(db.weather_obs_tbl, db.weather_obs_tbl.c.datetime, {"location_id": location_id},
                                   start, end)
     return [WeatherObservationIn(**row._mapping) for row in results]
@@ -67,6 +87,7 @@ async def get_weather_obs(location_id: int = Query(...), start: datetime = Query
 
 @router.get("/weather_fcst", response_model=list[WeatherForecastIn])
 async def get_weather_forecast(location_id: int = Query(...), start: datetime = Query(...), end: datetime = Query(...)):
+    await _validate_location_exists(location_id)
     results = await fetch_timeseries(db.weather_fc_tbl, db.weather_fc_tbl.c.target_time, {"location_id": location_id},
                                   start, end)
     return [WeatherForecastIn(**row._mapping) for row in results]
@@ -78,11 +99,8 @@ async def _get_calculated_household_prices(household_id: int, start: datetime, e
     """
     Fetches and calculates prices for a specific household using its formula.
     """
-    # Get household to find location and price formula
-    household_query = select(db.households_tbl).where(db.households_tbl.c.household_id == household_id)
-    household = await database_session.fetch_one(household_query)
-    if not household:
-        raise HTTPException(status_code=404, detail=f"Household with id {household_id} not found")
+    # Validate household exists and get household data
+    household = await _validate_household_exists(household_id)
 
     # Get location to find price_region_id
     location_query = select(db.locations_tbl).where(db.locations_tbl.c.location_id == household.location_id)
