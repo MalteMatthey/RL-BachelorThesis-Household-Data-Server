@@ -142,7 +142,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
         raw_records.extend(page_records)
         if len(series) < 100:
             break
-    offset += 100
+        offset += 100
 
     # process records into Pydantic models
     processed_records: List[Dict[str, Any]] = []
