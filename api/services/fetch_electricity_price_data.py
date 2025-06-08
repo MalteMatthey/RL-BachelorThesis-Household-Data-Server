@@ -25,6 +25,7 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
     """
     Fetches day-ahead electricity prices for a given region and date range using ENTSO-E.
     Uses B2 for caching raw API XML responses and supports pagination via offset.
+    Automatically splits large date ranges (>1year) into smaller chunks to comply with ENTSO-E API limits.
     """
     print(f"Fetching ENTSO-E day-ahead prices for price_region_id {price_region_id} from {start} to {end}")
 
@@ -53,20 +54,91 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
         print(f"Using DEFAULT_EIC_CODE fallback for price_region_id {price_region_id}")
         country_code = DEFAULT_EIC_CODE
 
-    # Ensure start and end are timezone-aware (UTC) and convert to Brussels for API consistency
+    # Ensure start and end are timezone-aware (UTC)
     start_utc = start.astimezone(timezone.utc) if start.tzinfo else start.replace(tzinfo=timezone.utc)
     end_utc = end.astimezone(timezone.utc) if end.tzinfo else end.replace(tzinfo=timezone.utc)
 
-    # entsoe-py expects pandas Timestamps with a timezone for start/end
-    # 'Europe/Brussels' is commonly used for ENTSO-E API queries
+    # Check if date range exceeds 1 year and split into chunks if needed
+    date_chunks = _split_date_range_by_year(start_utc, end_utc)
+    print(f"Split date range into {len(date_chunks)} chunks to comply with ENTSO-E API 1-year limit")
+    
+    all_records: List[Dict[str, Any]] = []
+    
+    # Process each date chunk separately
+    for chunk_start, chunk_end in date_chunks:
+        print(f"Processing chunk: {chunk_start} to {chunk_end}")
+        chunk_records = await _fetch_prices_for_date_range(
+            price_region_id, chunk_start, chunk_end, country_code
+        )
+        all_records.extend(chunk_records)
+    
+    # Deduplicate records across all chunks as safety measure
+    seen_keys = set()
+    deduplicated_records: List[Dict[str, Any]] = []
+    duplicates_removed = 0
+    
+    for record in all_records:
+        time_obj: datetime = record["time"]
+        # Normalize the time component of the key to ensure robust deduplication
+        # Uses (year, month, day, hour, minute, second) tuple from the UTC datetime
+        normalized_time_key_tuple = (
+            time_obj.year, 
+            time_obj.month, 
+            time_obj.day,
+            time_obj.hour, 
+            time_obj.minute, 
+            time_obj.second
+        )
+        key = (record["price_region_id"], normalized_time_key_tuple)
+        
+        if key not in seen_keys:
+            seen_keys.add(key)
+            deduplicated_records.append(record)
+        else:
+            duplicates_removed += 1
+    
+    if duplicates_removed > 0:
+        print(f"Removed {duplicates_removed} duplicate records across all chunks for price_region_id {price_region_id}")
+    
+    print(f"Processed {len(deduplicated_records)} unique price records for price_region_id {price_region_id}.")
+    return deduplicated_records
+
+
+def _split_date_range_by_year(start: datetime, end: datetime) -> List[tuple[datetime, datetime]]:
+    """
+    Splits a date range into chunks of maximum 1 year each to comply with ENTSO-E API limits.
+    Returns list of (start, end) datetime tuples.
+    """
+    chunks = []
+    current_start = start
+    
+    while current_start < end:
+        # Calculate end of current chunk (1 year from start, but not exceeding original end)
+        next_year = current_start.replace(year=current_start.year + 1)
+        current_end = min(next_year, end)
+        
+        chunks.append((current_start, current_end))
+        current_start = current_end
+    
+    return chunks
+
+
+async def _fetch_prices_for_date_range(
+    price_region_id: int, 
+    start: datetime, 
+    end: datetime, 
+    country_code: str
+) -> List[Dict[str, Any]]:
+    """
+    Fetches prices for a single date range (≤1 year) from ENTSO-E API.
+    """
+    # Convert to Brussels timezone for API consistency
     try:
-        start_ts_brussels = pd.Timestamp(start_utc).tz_convert('Europe/Brussels')
-        end_ts_brussels = pd.Timestamp(end_utc).tz_convert('Europe/Brussels')
+        start_ts_brussels = pd.Timestamp(start).tz_convert('Europe/Brussels')
+        end_ts_brussels = pd.Timestamp(end).tz_convert('Europe/Brussels')
     except Exception as e:
         print(f"Error converting datetimes to Pandas Timestamps with Brussels timezone: {e}")
-        return []
-
-    # paginate through raw ENTSO-E XML (100 TimeSeries per page) using offset
+        return []    # paginate through raw ENTSO-E XML (100 TimeSeries per page) using offset
     API_URL = "https://web-api.tp.entsoe.eu/api"
     offset = 0
     raw_records: List[Dict[str, Any]] = []
@@ -122,6 +194,10 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
                 base_dt = datetime.fromisoformat(start_iso.replace("Z", "+00:00"))
             except ValueError:
                 continue
+
+            
+        
+            
             if resolution.startswith("PT") and resolution.endswith("M"):
                 step = timedelta(minutes=int(resolution[2:-1]))
             elif resolution.startswith("PT") and resolution.endswith("H"):
@@ -129,11 +205,18 @@ async def fetch_external_electricity_prices(price_region_id: int, start: datetim
             else:
                 step = timedelta()
             for pt in period.findall("{*}Point"):
-                pos = int(pt.find("{*}position").text)
-                price = pt.find("{*}price.amount").text
+                pos_element = pt.find("{*}position")
+                price_element = pt.find("{*}price.amount")
+                
+                if pos_element is None or pos_element.text is None:
+                    continue
+                if price_element is None or price_element.text is None:
+                    continue
+                
                 try:
-                    val = float(price)
-                except ValueError:
+                    pos = int(pos_element.text)
+                    val = float(price_element.text)
+                except (ValueError, TypeError):
                     continue
                 ts_point = (base_dt + (pos - 1) * step).astimezone(timezone.utc)
                 page_records.append({"time": ts_point, "price_eur_mwh": val})
@@ -206,10 +289,10 @@ async def _make_entsoe_request(
             print(f"Using cached raw ENTSO-E response: {backup_filename}")
             return data_bytes
         else:
-            print(f"Failed to load raw backup {backup_filename}, fetching live...")
-    # live call
+            print(f"Failed to load raw backup {backup_filename}, fetching live...")    # live call
     request_params = params.copy()
-    request_params["securityToken"] = ENTSOE_API_KEY
+    if ENTSOE_API_KEY:
+        request_params["securityToken"] = ENTSOE_API_KEY
     try:
         async with httpx.AsyncClient() as client:
             resp = await client.get(base_url, params=request_params, timeout=timeout)
