@@ -62,6 +62,7 @@ async def get_rl_agent_state(
         forecast_hours=forecast_hours,
         resolution_minutes=resolution_minutes
     )
+    print(f"Generated SQL query:\n {sql}")
     raw_rows = await database.fetch_all(sql)
 
     results = []

@@ -9,6 +9,7 @@ httpx>=0.20
 b2sdk==2.8.1
 entsoe-py
 pandas
+numpy
 pytest
 pytest-asyncio
 pytest-mock
