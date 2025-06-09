@@ -244,28 +244,55 @@ def _build_observation_request_details(
     return url, params
 
 
-async def fetch_external_weather_observations(
+def _split_date_range_into_chunks(start: datetime, end: datetime, max_days_per_chunk: int = 365) -> List[Tuple[datetime, datetime]]:
+    """
+    Split a large date range into smaller chunks to avoid Visual Crossing API query limits.
+    
+    Args:
+        start: Start datetime
+        end: End datetime  
+        max_days_per_chunk: Maximum number of days per chunk (default 365 for ~1 year)
+        
+    Returns:
+        List of (start, end) datetime tuples representing chunks
+    """
+    chunks = []
+    current_start = start
+    
+    while current_start < end:
+        # Calculate chunk end date (max_days_per_chunk days from current start, but not beyond overall end)
+        chunk_end = min(current_start + timedelta(days=max_days_per_chunk), end)
+        chunks.append((current_start, chunk_end))
+        
+        # Move to next chunk (add 1 day to avoid overlap)
+        current_start = chunk_end + timedelta(days=1)
+        
+    return chunks
+
+
+async def _fetch_weather_observations_chunk(
         location_id: int, lat: float, lon: float, start: datetime, end: datetime
 ) -> List[Dict[str, Any]]:
     """
-    Fetches hourly historical weather observations for a given location and date range.
-
+    Fetches weather observations for a single time chunk.
+    
     Args:
         location_id: The ID of the location.
         lat: Latitude of the location.
-        lon: Longitude of the location.
+        lon: Longitude of the location. 
         start: The starting datetime (inclusive) for observations.
         end: The ending datetime (inclusive) for observations.
-
+        
     Returns:
         A list of dictionaries, each representing an hourly observation record.
     """
-    print(f"Fetching HOURLY weather observations for location {location_id} ({lat},{lon}) from {start} to {end}")
-
-    # 1. Build Request Details
     # Ensure timezone awareness (assume UTC if none provided)
     start_utc = start.astimezone(timezone.utc) if start.tzinfo else start.replace(tzinfo=timezone.utc)
     end_utc = end.astimezone(timezone.utc) if end.tzinfo else end.replace(tzinfo=timezone.utc)
+    
+    print(f"  Fetching chunk: location {location_id} ({lat},{lon}) from {start_utc} to {end_utc}")
+    
+    # 1. Build Request Details
     url, params = _build_observation_request_details(lat, lon, start_utc, end_utc)
 
     # 2. Make API Request
@@ -283,8 +310,69 @@ async def fetch_external_weather_observations(
         exclude_keys=exclude_keys
     )
 
-    print(f"Fetched and processed {len(processed_data)} hourly observation records for location {location_id}.")
+    print(f"  Chunk complete: {len(processed_data)} records for location {location_id}")
     return processed_data
+
+
+async def fetch_external_weather_observations(
+        location_id: int, lat: float, lon: float, start: datetime, end: datetime
+) -> List[Dict[str, Any]]:
+    """
+    Fetches hourly historical weather observations for a given location and date range.
+    Automatically splits large requests into smaller chunks to respect Visual Crossing API limits.
+
+    Args:
+        location_id: The ID of the location.
+        lat: Latitude of the location.
+        lon: Longitude of the location.
+        start: The starting datetime (inclusive) for observations.
+        end: The ending datetime (inclusive) for observations.
+
+    Returns:
+        A list of dictionaries, each representing an hourly observation record.
+    """
+    print(f"Fetching HOURLY weather observations for location {location_id} ({lat},{lon}) from {start} to {end}")
+
+    # Calculate the total duration
+    duration = end - start
+    total_days = duration.days
+    
+    print(f"Total duration: {total_days} days")
+    
+    # If the request is small enough (less than 300 days), make a single request
+    # Otherwise, split into chunks to avoid API limits
+    if total_days <= 300:
+        print("Request size acceptable for single API call")
+        return await _fetch_weather_observations_chunk(location_id, lat, lon, start, end)
+    else:
+        print(f"Request too large ({total_days} days), splitting into chunks")
+        
+        # Split into chunks (using 300 days per chunk to stay well under API limits)
+        chunks = _split_date_range_into_chunks(start, end, max_days_per_chunk=300)
+        print(f"Split into {len(chunks)} chunks")
+        
+        all_observations = []
+        
+        # Process each chunk sequentially to respect API rate limits
+        for i, (chunk_start, chunk_end) in enumerate(chunks, 1):
+            print(f"Processing chunk {i}/{len(chunks)}")
+            
+            try:
+                chunk_data = await _fetch_weather_observations_chunk(location_id, lat, lon, chunk_start, chunk_end)
+                all_observations.extend(chunk_data)
+                
+                # Add a small delay between chunks to be respectful to the API
+                if i < len(chunks):  # Don't delay after the last chunk
+                    print("  Waiting 2 seconds before next chunk...")
+                    await asyncio.sleep(2)
+                    
+            except Exception as e:
+                print(f"Error processing chunk {i}: {e}")
+                # Continue with other chunks even if one fails
+                continue
+        
+        print(f"Fetched and processed {len(all_observations)} total hourly observation records for location {location_id}.")
+        return all_observations
 
 
 # --- Weather Forecast Specific Logic ---

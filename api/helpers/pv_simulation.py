@@ -1,7 +1,3 @@
-"""
-PV simulation logic using pvlib.
-Adapted from irradiance_test.py for modular use.
-"""
 import pvlib
 from pvlib.location import Location
 from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS
