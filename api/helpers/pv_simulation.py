@@ -294,21 +294,19 @@ def add_realistic_volatility(
 
 def apply_volatility_to_generation_series(
     generation_series: pd.Series,
-    max_power_kw: float,
     random_seed: int = VOLATILITY_RANDOM_SEED
 ) -> pd.Series:
     """
     Apply volatility directly to a pandas Series of generation values.
     
     Args:
-        generation_series: Series with generation values in kWh
-        max_power_kw: Maximum power output for calculating target volatility
+        generation_series: Series with generation values (kWh or W)
         random_seed: Fixed seed for deterministic results
         
     Returns:
         Series with volatility added
     """
-    if len(generation_series) == 0 or max_power_kw <= 0:
+    if len(generation_series) == 0:
         return generation_series
     
     # Set random seed for deterministic results
@@ -319,10 +317,15 @@ def apply_volatility_to_generation_series(
     if pd.isna(base_ramp_std):
         base_ramp_std = 0
     
-    # Calculate target volatility (6% of max power)
-    target_ramp_std_absolute = max_power_kw * TARGET_RELATIVE_RAMP_STD
+    # Calculate target volatility (6% of max power from the actual series)
+    max_power_sim = generation_series.max()
+    if max_power_sim <= 0:
+        print("Warning: No positive generation values found. No volatility added.")
+        return generation_series
+        
+    target_ramp_std_absolute = max_power_sim * TARGET_RELATIVE_RAMP_STD
     
-    print(f"Volatility calculation: max_power={max_power_kw:.2f} kWh, base_ramp_std={base_ramp_std:.4f}, target_ramp_std={target_ramp_std_absolute:.4f}")
+    print(f"Volatility calculation: max_power={max_power_sim:.4f}, base_ramp_std={base_ramp_std:.4f}, target_ramp_std={target_ramp_std_absolute:.4f}")
     
     # Calculate required noise variance
     target_ramp_variance = target_ramp_std_absolute**2
@@ -330,9 +333,9 @@ def apply_volatility_to_generation_series(
     
     noise_variance = (target_ramp_variance - base_ramp_variance) / 2.0
     
-    if noise_variance <= 0:
-        print("Warning: Target volatility already achieved or lower than base. No noise added.")
-        return generation_series
+    if noise_variance < 0:
+        print("Warning: Target volatility is already lower than base. No noise added.")
+        noise_variance = 0
     
     noise_std = np.sqrt(noise_variance)
     
