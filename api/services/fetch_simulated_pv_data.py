@@ -84,8 +84,7 @@ async def fetch_simulated_pv_data_per_household(
             energy_kwh = (ac_power / 1000) * 0.25  # 15 minutes = 0.25 hours
             
             # Apply realistic volatility to the generation data
-            max_power_kw = household_data['pv_capacity_kw']
-            volatile_energy_kwh = apply_volatility_to_generation_series(energy_kwh, max_power_kw)
+            volatile_energy_kwh = apply_volatility_to_generation_series(energy_kwh)
             
             # Create result records
             for timestamp, generation in volatile_energy_kwh.items():
