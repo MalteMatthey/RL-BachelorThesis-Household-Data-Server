@@ -2,13 +2,20 @@ import pvlib
 from pvlib.location import Location
 from pvlib.temperature import TEMPERATURE_MODEL_PARAMETERS
 import pandas as pd
+import numpy as np
 from timezonefinder import TimezoneFinder
+from typing import List, Dict, Any
 
 # Default constants
 DEFAULT_TEMP_AIR_CELSIUS = 20
 DEFAULT_WIND_SPEED_MPS = 1.0
 DEFAULT_SNOW_DEPTH_CM = 0.0
 DEFAULT_SNOWFALL_CM_PER_INTERVAL = 0.0
+
+# Volatility constants
+TARGET_RELATIVE_RAMP_STD = 0.06  # 6% of max power output
+VOLATILITY_AMPLIFICATION_FACTOR = 3.5
+VOLATILITY_RANDOM_SEED = 42  # Fixed seed for deterministic results
 
 
 def calculate_pv_generation(
@@ -187,7 +194,7 @@ def calculate_pv_generation(
     print(f"DC capacity: {capacity_w} W, temp coefficient: {module_temp_coeff_power:.4f} /°C")
     
     dc_module_output = pvlib.pvsystem.pvwatts_dc(
-        g_poa_effective=effective_poa_global,
+        effective_irradiance=effective_poa_global,
         temp_cell=temp_cell,
         pdc0=capacity_w,
         gamma_pdc=module_temp_coeff_power
@@ -209,3 +216,140 @@ def calculate_pv_generation(
     print("PV simulation completed successfully")
     
     return ac_power
+
+
+def add_realistic_volatility(
+    simulation_data: List[Dict[str, Any]],
+    target_ramp_std: float,
+    base_ramp_std: float,
+    amplification_factor: float = VOLATILITY_AMPLIFICATION_FACTOR,
+    random_seed: int = VOLATILITY_RANDOM_SEED
+) -> List[Dict[str, Any]]:
+    """
+    Adds realistic volatility to simulated PV generation data by adding
+    scaled, amplified, and controlled white noise.
+
+    Args:
+        simulation_data: A list of dictionaries representing the time series.
+        target_ramp_std: The target standard deviation of the ramps (absolute kWh).
+        base_ramp_std: The standard deviation of the ramps from the clean simulation.
+        amplification_factor: A factor to boost the noise strength to compensate
+                              for the subsequent scaling.
+        random_seed: Fixed seed for deterministic results.
+
+    Returns:
+        A list of dictionaries with adjusted 'generation_kwh' values.
+    """
+    if not simulation_data:
+        return []
+
+    # Set random seed for deterministic results
+    np.random.seed(random_seed)
+
+    df = pd.DataFrame(simulation_data)
+    df['time'] = pd.to_datetime(df['time'])
+    df = df.set_index('time')
+
+    # 1. Calculate the theoretically required variance for the noise to be added.
+    # The variance of the ramps (changes) increases by 2 * Var(Noise).
+    target_ramp_variance = target_ramp_std**2
+    base_ramp_variance = base_ramp_std**2
+    
+    noise_variance = (target_ramp_variance - base_ramp_variance) / 2.0
+    
+    if noise_variance < 0:
+        print("Warning: Target volatility is already lower than base. No noise added.")
+        noise_variance = 0
+    
+    noise_std = np.sqrt(noise_variance)
+
+    # 2. Amplify the noise standard deviation to compensate for the scaling effect.
+    amplified_noise_std = noise_std * amplification_factor
+
+    # 3. Generate the amplified noise signal.
+    noise = np.random.normal(loc=0.0, scale=amplified_noise_std, size=len(df))
+
+    # 4. Scale the noise by the generation power to avoid adding noise at night.
+    # Noise is stronger when the sun is shining brightly.
+    max_gen = df['generation_kwh'].max()
+    if max_gen > 0:
+        # This scaling factor ensures noise is proportional to the generation level.
+        scaling_factor = df['generation_kwh'] / max_gen
+        noise *= scaling_factor.values
+        
+    # 5. Add the controlled noise to the original values.
+    df['generation_kwh'] += noise
+
+    # 6. Ensure that generation cannot be negative after adding noise.
+    df['generation_kwh'] = df['generation_kwh'].clip(lower=0)
+    
+    # Convert back to the original list of dictionaries format.
+    df = df.reset_index()
+    processed_data = df.to_dict('records')
+    for record in processed_data:
+        record['time'] = record['time'].strftime('%Y-%m-%dT%H:%M:%SZ')
+
+    return processed_data
+
+
+def apply_volatility_to_generation_series(
+    generation_series: pd.Series,
+    max_power_kw: float,
+    random_seed: int = VOLATILITY_RANDOM_SEED
+) -> pd.Series:
+    """
+    Apply volatility directly to a pandas Series of generation values.
+    
+    Args:
+        generation_series: Series with generation values in kWh
+        max_power_kw: Maximum power output for calculating target volatility
+        random_seed: Fixed seed for deterministic results
+        
+    Returns:
+        Series with volatility added
+    """
+    if len(generation_series) == 0 or max_power_kw <= 0:
+        return generation_series
+    
+    # Set random seed for deterministic results
+    np.random.seed(random_seed)
+    
+    # Calculate base volatility (ramp standard deviation)
+    base_ramp_std = generation_series.diff().std()
+    if pd.isna(base_ramp_std):
+        base_ramp_std = 0
+    
+    # Calculate target volatility (6% of max power)
+    target_ramp_std_absolute = max_power_kw * TARGET_RELATIVE_RAMP_STD
+    
+    print(f"Volatility calculation: max_power={max_power_kw:.2f} kWh, base_ramp_std={base_ramp_std:.4f}, target_ramp_std={target_ramp_std_absolute:.4f}")
+    
+    # Calculate required noise variance
+    target_ramp_variance = target_ramp_std_absolute**2
+    base_ramp_variance = base_ramp_std**2
+    
+    noise_variance = (target_ramp_variance - base_ramp_variance) / 2.0
+    
+    if noise_variance <= 0:
+        print("Warning: Target volatility already achieved or lower than base. No noise added.")
+        return generation_series
+    
+    noise_std = np.sqrt(noise_variance)
+    
+    # Amplify the noise standard deviation
+    amplified_noise_std = noise_std * VOLATILITY_AMPLIFICATION_FACTOR
+    
+    # Generate noise
+    noise = np.random.normal(loc=0.0, scale=amplified_noise_std, size=len(generation_series))
+    
+    # Scale noise by generation level to avoid noise at night
+    max_gen = generation_series.max()
+    if max_gen > 0:
+        scaling_factor = generation_series / max_gen
+        noise *= scaling_factor.values
+    
+    # Add noise and ensure non-negative values
+    volatile_generation = generation_series + noise
+    volatile_generation = volatile_generation.clip(lower=0)
+    
+    return volatile_generation

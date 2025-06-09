@@ -7,7 +7,7 @@ from typing import Set, List, Dict, Any, Optional, Tuple
 import tempfile
 
 from .b2_backup import b2_handler
-from ..helpers.pv_simulation import calculate_pv_generation
+from ..helpers.pv_simulation import calculate_pv_generation, apply_volatility_to_generation_series
 from ..helpers.weather_data_fetcher_from_db import fetch_weather_data_from_db, combine_irradiation_and_weather_data
 from ..helpers.elevation_helper import get_altitude_from_coordinates
 from api.db import database as app_db
@@ -80,12 +80,15 @@ async def fetch_simulated_pv_data_per_household(
                 module_temp_coeff_power=household_data['pv_module_temp_coeff_power'],
                 weather_data=combined_weather_data
             )
-            
             # Convert power (W) to energy (kWh) for 15-minute intervals
             energy_kwh = (ac_power / 1000) * 0.25  # 15 minutes = 0.25 hours
             
+            # Apply realistic volatility to the generation data
+            max_power_kw = household_data['pv_capacity_kw']
+            volatile_energy_kwh = apply_volatility_to_generation_series(energy_kwh, max_power_kw)
+            
             # Create result records
-            for timestamp, generation in energy_kwh.items():
+            for timestamp, generation in volatile_energy_kwh.items():
                 all_pv_results.append({
                     "household_id": household_id,
                     "time": timestamp.astimezone(timezone.utc),
