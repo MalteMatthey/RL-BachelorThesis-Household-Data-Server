@@ -27,7 +27,7 @@ def test_rl_agent_state_example_request(http_client, base_url):
     start = "2024-01-01T12:59:00Z"
     end = "2024-01-01T13:58:00Z"
     fields = [
-        "price_region_id", "calculated_price_eur_mwh", "raw_price_eur_mwh",
+        "prices",
         "pv_generation_kwh", "load_consumption_kwh",
         "obs_temp", "obs_humidity", "obs_windspeed", "obs_cloudcover", "obs_solarradiation", "forecasts"
     ]
@@ -91,7 +91,7 @@ def test_rl_agent_state_different_fields(http_client, base_url):
     start = "2024-01-01T00:00:00Z"
     end = "2024-01-01T01:00:00Z"
     # Always include minimal required fields (e.g., timestamp, forecasts)
-    fields = ["timestamp", "raw_price_eur_mwh", "pv_generation_kwh", "obs_temp"]
+    fields = ["timestamp", "prices", "pv_generation_kwh", "obs_temp"]
     params = [
         f"household_id={household_id}",
         f"start_time={start}",
