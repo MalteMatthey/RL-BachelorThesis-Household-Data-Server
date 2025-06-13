@@ -42,12 +42,17 @@ FORECAST_ENTRY_FIELDS = [
     "winddir100", "ghiradiation", "dniradiation", "difradiation", "sunelevation"
 ]
 
+# Price fields for price forecasts
+PRICE_ENTRY_FIELDS = [
+    "time", "price_eur_mwh"
+]
+
 # Field Configuration
 FIELD_CONFIG: Dict[str, Dict[str, Any]] = {
-    "raw_price_eur_mwh": {
-        "main_select_expr": f"{CTE_ALIASES['price_data']}.\"price_eur_mwh\"",
-        "cte_dependency": "price_data", "cte_source_column": "price_eur_mwh", "cte_alias": "price_eur_mwh",
-        "cte_table": PRICE_TABLE, "cte_time_column": "time", "cte_filter_column_name": "price_region_id",
+    "prices": {
+        "main_select_expr": f"{CTE_ALIASES['price_data']}.\"price_forecasts\"",
+        "requires_price_join": True,
+        "cte_dependency": None,
     },
     "pv_generation_kwh": {
         "main_select_expr": f"{CTE_ALIASES['pv_data']}.\"generation_kwh\"",
@@ -88,7 +93,8 @@ def _quote_sql_identifier(name: str) -> str:
     """Quotes a SQL identifier (table or column name)."""
     if not isinstance(name, str):
         raise TypeError("Identifier must be a string")
-    return f'"{name.replace("\"", "\"\"")}"' # Basic quoting, replace " with ""
+    escaped_name = name.replace('"', '""')  # Basic quoting, replace " with ""
+    return f'"{escaped_name}"'
 
 def _format_sql_value(value: Any) -> str:
     """Formats a Python value into a SQL literal string."""
@@ -97,7 +103,8 @@ def _format_sql_value(value: Any) -> str:
     if isinstance(value, (int, float)):
         return str(value)
     # Basic SQL injection protection for strings
-    return f"'{str(value).replace('\'', '\'\'')}'"
+    escaped_value = str(value).replace("'", "''")
+    return f"'{escaped_value}'"
 
 
 def _determine_selected_fields(requested_fields_input: Optional[List[str]]) -> Set[str]:
@@ -261,6 +268,52 @@ def _build_forecast_join_sql(
         ) {fc_cte_alias} ON true"""
 
 
+def _build_price_join_sql(
+    price_region_id: int,
+    price_fields_input: Optional[List[str]],
+    price_table_name: str,
+    price_cte_alias: str  # This is the alias for the LATERAL subquery block, e.g., "pr"
+) -> str:
+    """Builds the SQL for the price LATERAL JOIN clause for day-ahead prices."""
+    pf_to_select = set(PRICE_ENTRY_FIELDS)
+    if price_fields_input:
+        pf_to_select = set(price_fields_input)
+    pf_to_select.add("time")  # Essential for ordering and data models
+
+    json_build_object_args = [
+        f"'{field}', ep.{_quote_sql_identifier(field)}" 
+        for field in sorted(list(pf_to_select))
+    ]
+    
+    q_price_table_name = _quote_sql_identifier(price_table_name)
+    
+    ep_alias = _quote_sql_identifier("ep")  # Alias for the electricity_prices table inside the LATERAL
+
+    return f"""
+        LEFT JOIN LATERAL (
+        SELECT
+            COALESCE(
+            jsonb_agg(
+                jsonb_build_object({', '.join(json_build_object_args)})
+                ORDER BY {ep_alias}."time" ASC
+            ),
+            '[]'::jsonb
+            ) AS "price_forecasts" -- This is the column name selected, must match FIELD_CONFIG
+        FROM {q_price_table_name} AS {ep_alias}
+        WHERE {ep_alias}."price_region_id" = {_format_sql_value(price_region_id)}
+            AND {ep_alias}."time" >= date_trunc('hour', ms.ts)            AND (
+                -- Rest of current day (up to 23:00 local time)
+                ({ep_alias}."time" >= date_trunc('hour', ms.ts) 
+                 AND {ep_alias}."time" <= (date_trunc('day', ms.ts AT TIME ZONE 'Europe/Berlin') + INTERVAL '23 hours') AT TIME ZONE 'Europe/Berlin')
+                OR
+                -- Next day if after 13:00 CET/CEST (all hours 0-23 of next day local time)
+                (EXTRACT(hour FROM ms.ts AT TIME ZONE 'Europe/Berlin') >= 13 
+                 AND {ep_alias}."time" >= (date_trunc('day', ms.ts AT TIME ZONE 'Europe/Berlin') + INTERVAL '1 day') AT TIME ZONE 'Europe/Berlin'
+                 AND {ep_alias}."time" <= (date_trunc('day', ms.ts AT TIME ZONE 'Europe/Berlin') + INTERVAL '1 day 23 hours') AT TIME ZONE 'Europe/Berlin')
+            )
+        ) {price_cte_alias} ON true"""
+
+
 # --- Main Query Builder Function ---
 
 def build_rl_agent_state_query(
@@ -316,6 +369,17 @@ def build_rl_agent_state_query(
         )
         if fc_join_sql: # It might return an empty string if no valid fields
             main_join_sql_parts.append(fc_join_sql)
+    
+    # 4. Price LATERAL JOIN (if requested)
+    if "prices" in selected_fields:
+        price_join_sql = _build_price_join_sql(
+            price_region_id,
+            None,  # Use default price fields
+            PRICE_TABLE,
+            CTE_ALIASES["price_data"]
+        )
+        if price_join_sql:
+            main_join_sql_parts.append(price_join_sql)
 
     # Assemble the final query
     ordered_cte_names = ["minute_series"] + sorted(

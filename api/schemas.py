@@ -161,15 +161,20 @@ class WeatherForecastIn(WeatherForecastBase):
 class ForecastEntry(WeatherForecastBase):
     pass
 
+# Price Entry for day-ahead price forecasts
+class PriceEntry(BaseModel):
+    time: datetime
+    price_eur_mwh: float
+    calculated_price_eur_mwh: Optional[float] = None
+    calculated_feed_in_eur_mwh: Optional[float] = None
+
 # Define the response model for the RL Agent State
 class RLAgentStateData(BaseModel):
     timestamp: datetime
     forecasts: Optional[List[ForecastEntry]] = None
 
     # Price related fields
-    raw_price_eur_mwh: Optional[float] = None
-    calculated_price_eur_mwh: Optional[float] = None
-    calculated_feed_in_eur_mwh: Optional[float] = None
+    day_ahead_prices: Optional[List[PriceEntry]] = None  # Day-ahead price structure
 
     # PV related fields
     pv_generation_kwh: Optional[float] = None
