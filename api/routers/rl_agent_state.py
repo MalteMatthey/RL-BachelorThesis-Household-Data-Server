@@ -3,7 +3,7 @@ from typing import List, Optional, Set
 import json
 
 from fastapi import APIRouter, Query, HTTPException
-from api.schemas import ForecastEntry, RLAgentStateData
+from api.schemas import ForecastEntry, RLAgentStateData, PriceEntry
 from api.db import database
 from api.helpers.dynamic_query_builder import build_rl_agent_state_query, REQUESTABLE_DB_FIELDS, FORECAST_ENTRY_FIELDS
 from api.helpers.formula_calculator import calculate_price_with_formula
@@ -25,19 +25,12 @@ async def get_rl_agent_state(
     if end_time is None:
         end_time = start_time
     if end_time < start_time:
-        raise HTTPException(status_code=400, detail="end_time cannot be before start_time.")
-
-    # Determine effective fields for the SQL query.
+        raise HTTPException(status_code=400, detail="end_time cannot be before start_time.")    # Determine effective fields for the SQL query.
     # Start with a copy of the user's requested fields (if any).
-    effective_sql_fields: Set[str] = set(fields) if fields else set()
-
-    # If 'calculated_price_eur_mwh' is requested in the API call, enforce inclusion of necessary raw price for calculation.
-    if fields and "calculated_price_eur_mwh" in fields:
-        effective_sql_fields.add("raw_price_eur_mwh")
-
-    # If 'calculated_feed_in_eur_mwh' is requested in the API call, enforce inclusion of necessary raw price for calculation.
-    if fields and "calculated_feed_in_eur_mwh" in fields:
-        effective_sql_fields.add("raw_price_eur_mwh")
+    effective_sql_fields: Set[str] = set(fields) if fields else set()    # If price-related fields are requested, ensure we include prices
+    price_fields_requested = fields and "prices" in fields
+    if price_fields_requested:
+        effective_sql_fields.add("prices")
 
     # Validate household and get related IDs
     household = await database.fetch_one(
@@ -79,6 +72,41 @@ async def get_rl_agent_state(
         except Exception:
             forecast_list = []
 
+        # parse price forecasts
+        price_forecast_list = []
+        try:
+            raw_pf = r.get("price_forecasts") or []
+            if isinstance(raw_pf, str):
+                raw_pf = json.loads(raw_pf)
+            if isinstance(raw_pf, list):
+                for price_entry in raw_pf:
+                    # Calculate the derived prices for each price entry
+                    raw_price = price_entry.get("price_eur_mwh")
+                    calculated_price = None
+                    calculated_feed_in = None
+                    
+                    if household.enduser_price_formula and raw_price is not None:
+                        calculated_price = round(calculate_price_with_formula(
+                            household.enduser_price_formula, raw_price
+                        ), 2)
+                    
+                    if household.enduser_feed_in_formula and raw_price is not None:
+                        calculated_feed_in = round(calculate_price_with_formula(
+                            household.enduser_feed_in_formula, raw_price
+                        ), 2)
+                    
+                    # Create PriceEntry with calculated values
+                    price_forecast_list.append(PriceEntry(
+                        time=price_entry["time"],
+                        price_eur_mwh=raw_price,
+                        calculated_price_eur_mwh=calculated_price,
+                        calculated_feed_in_eur_mwh=calculated_feed_in
+                    ))
+        
+        except Exception as e:
+            print(f"Error processing price forecasts: {e}")
+            price_forecast_list = []
+
         # Initialize data_kwargs with guaranteed fields
         data_kwargs = {
             "timestamp": r["timestamp"], # 'timestamp' is always expected
@@ -86,36 +114,12 @@ async def get_rl_agent_state(
 
         if (fields is None) or ("forecasts" in fields):
             data_kwargs["forecasts"] = forecast_list
+        if (fields is None) or ("prices" in fields):
+            data_kwargs["day_ahead_prices"] = price_forecast_list
         if "generation_kwh" in r: # Corresponds to "pv_generation_kwh" in fields
             data_kwargs["pv_generation_kwh"] = r.get("generation_kwh")
         if "consumption_kwh" in r: # Corresponds to "load_consumption_kwh" in fields
             data_kwargs["load_consumption_kwh"] = r.get("consumption_kwh")
-        if (fields is None) or "raw_price_eur_mwh" in fields:
-            data_kwargs["raw_price_eur_mwh"] = r.get("price_eur_mwh")
-        
-        if (fields is None) or "calculated_price_eur_mwh" in fields:
-            # The raw price for calculation is fetched as "price_eur_mwh" from SQL.
-            raw_price_for_calc = r.get("price_eur_mwh") 
-            if household.enduser_price_formula and raw_price_for_calc is not None:
-                calculated_price = calculate_price_with_formula(
-                    household.enduser_price_formula,
-                    raw_price_for_calc
-                )
-                data_kwargs["calculated_price_eur_mwh"] = round(calculated_price, 2)
-            else:
-                data_kwargs["calculated_price_eur_mwh"] = None 
-        
-        if (fields is None) or "calculated_feed_in_eur_mwh" in fields:
-            # The raw price for calculation is fetched as "price_eur_mwh" from SQL.
-            raw_price_for_calc = r.get("price_eur_mwh") 
-            if household.enduser_feed_in_formula and raw_price_for_calc is not None:
-                calculated_feed_in = calculate_price_with_formula(
-                    household.enduser_feed_in_formula,
-                    raw_price_for_calc
-                )
-                data_kwargs["calculated_feed_in_eur_mwh"] = round(calculated_feed_in, 2)
-            else:
-                data_kwargs["calculated_feed_in_eur_mwh"] = None
         
         # copy any obs_* keys that were fetched
         for k_obs, v_obs in r.items():
