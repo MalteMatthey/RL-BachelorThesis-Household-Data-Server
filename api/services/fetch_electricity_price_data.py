@@ -226,10 +226,14 @@ async def _fetch_prices_for_date_range(
         if len(series) < 100:
             break
         offset += 100
-
+        
+    # Apply forward fill to handle missing data points due to ENTSO-E API behavior
+    # (API omits data points when price is same as previous hour)
+    filled_records = _apply_forward_fill(raw_records)
+    
     # process records into Pydantic models
     processed_records: List[Dict[str, Any]] = []
-    for rec in raw_records:
+    for rec in filled_records:
         data = {"price_region_id": price_region_id, "time": rec["time"], "price_eur_mwh": rec["price_eur_mwh"]}
         try:
             # exclude unset optional fields (e.g. calculated_price_eur_mwh) from insert payload
@@ -268,6 +272,69 @@ async def _fetch_prices_for_date_range(
     
     print(f"Processed {len(deduplicated_records)} unique price records for price_region_id {price_region_id}.")
     return deduplicated_records
+
+def _apply_forward_fill(
+    raw_records: List[Dict[str, Any]]
+) -> List[Dict[str, Any]]:
+    """
+    Apply forward fill to handle missing data points in ENTSO-E API responses.
+    The API sometimes omits data points when the price is the same as the previous hour.
+    
+    Args:
+        raw_records: List of records with 'time' and 'price_eur_mwh' keys
+        
+    Returns:
+        List of records with gaps filled using forward fill within the actual data range
+    """
+    if not raw_records:
+        return raw_records
+    
+    # Sort records by time to ensure proper ordering
+    sorted_records = sorted(raw_records, key=lambda x: x["time"])
+    
+    # Determine the actual data range from the returned records
+    actual_start = sorted_records[0]["time"].replace(minute=0, second=0, microsecond=0)
+    actual_end = sorted_records[-1]["time"].replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
+    
+    # Create a complete hourly time series within the actual data range
+    expected_times = []
+    current_time = actual_start
+    
+    while current_time < actual_end:
+        expected_times.append(current_time)
+        current_time += timedelta(hours=1)
+    
+    # Create a mapping of existing data points
+    existing_data = {rec["time"].replace(minute=0, second=0, microsecond=0): rec["price_eur_mwh"] 
+                    for rec in sorted_records}
+    
+    # Fill gaps using forward fill
+    filled_records = []
+    last_price = None
+    gaps_filled = 0
+    
+    for expected_time in expected_times:
+        if expected_time in existing_data:
+            # Data point exists, use it
+            price = existing_data[expected_time]
+            last_price = price
+        elif last_price is not None:
+            # Data point missing, use forward fill
+            price = last_price
+            gaps_filled += 1
+        else:
+            # No previous price available, skip this point
+            continue
+            
+        filled_records.append({
+            "time": expected_time,
+            "price_eur_mwh": price
+        })
+    
+    if gaps_filled > 0:
+        print(f"Forward filled {gaps_filled} missing data points due to ENTSO-E API gaps")
+    
+    return filled_records
 
 async def _make_entsoe_request(
         base_url: str,
