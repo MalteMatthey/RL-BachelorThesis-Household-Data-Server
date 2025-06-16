@@ -226,10 +226,10 @@ async def _fetch_prices_for_date_range(
         if len(series) < 100:
             break
         offset += 100
-
+        
     # Apply forward fill to handle missing data points due to ENTSO-E API behavior
     # (API omits data points when price is same as previous hour)
-    filled_records = _apply_forward_fill(raw_records, start, end)
+    filled_records = _apply_forward_fill(raw_records)
     
     # process records into Pydantic models
     processed_records: List[Dict[str, Any]] = []
@@ -274,9 +274,7 @@ async def _fetch_prices_for_date_range(
     return deduplicated_records
 
 def _apply_forward_fill(
-    raw_records: List[Dict[str, Any]], 
-    start_dt: datetime, 
-    end_dt: datetime
+    raw_records: List[Dict[str, Any]]
 ) -> List[Dict[str, Any]]:
     """
     Apply forward fill to handle missing data points in ENTSO-E API responses.
@@ -284,11 +282,9 @@ def _apply_forward_fill(
     
     Args:
         raw_records: List of records with 'time' and 'price_eur_mwh' keys
-        start_dt: Start datetime for the expected time range
-        end_dt: End datetime for the expected time range
         
     Returns:
-        List of records with gaps filled using forward fill
+        List of records with gaps filled using forward fill within the actual data range
     """
     if not raw_records:
         return raw_records
@@ -296,15 +292,15 @@ def _apply_forward_fill(
     # Sort records by time to ensure proper ordering
     sorted_records = sorted(raw_records, key=lambda x: x["time"])
     
-    # Convert to UTC and ensure timezone awareness
-    start_utc = start_dt.astimezone(timezone.utc) if start_dt.tzinfo else start_dt.replace(tzinfo=timezone.utc)
-    end_utc = end_dt.astimezone(timezone.utc) if end_dt.tzinfo else end_dt.replace(tzinfo=timezone.utc)
+    # Determine the actual data range from the returned records
+    actual_start = sorted_records[0]["time"].replace(minute=0, second=0, microsecond=0)
+    actual_end = sorted_records[-1]["time"].replace(minute=0, second=0, microsecond=0) + timedelta(hours=1)
     
-    # Create a complete hourly time series from start to end
+    # Create a complete hourly time series within the actual data range
     expected_times = []
-    current_time = start_utc.replace(minute=0, second=0, microsecond=0)  # Round down to hour
+    current_time = actual_start
     
-    while current_time < end_utc:
+    while current_time < actual_end:
         expected_times.append(current_time)
         current_time += timedelta(hours=1)
     
