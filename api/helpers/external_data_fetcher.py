@@ -1,7 +1,7 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Set, Dict, Tuple, List
 
-from sqlalchemy import select
+from sqlalchemy import select, and_
 
 from api.db import database
 import api.db as db
@@ -9,6 +9,129 @@ from api.services.fetch_electricity_price_data import fetch_external_electricity
 from api.services.fetch_weather_data import fetch_external_weather_observations, fetch_external_weather_forecasts
 from api.helpers.database_queries import get_existing_weather_time_ranges
 from api.helpers.time_range_utils import calculate_missing_time_ranges
+from api.helpers.synthetic_forecast_generator import create_synthetic_forecast
+
+
+_MIN_FORECAST_DATE = datetime(2020, 1, 1, tzinfo=timezone.utc)
+_HISTORICAL_END_DATE = datetime(2024, 12, 31, 23, 59, 59, tzinfo=timezone.utc)
+
+
+async def _handle_historical_data(
+    loc_id: int, lat: float, lon: float, start_time: datetime
+) -> Tuple[List[Dict], List[Dict], List[Dict]]:
+    """
+    Handles fetching historical weather data and generating synthetic forecasts.
+    It ensures that the synthetic forecast generation has access to all historical data,
+    both existing and newly fetched, while only returning the new data for insertion.
+    """
+    print(f"Request for location {loc_id} starts before {_MIN_FORECAST_DATE}. Checking for historical data for synthetic forecast generation.")
+    historical_start = _MIN_FORECAST_DATE
+    historical_end = _HISTORICAL_END_DATE
+
+    # 1. Fetch pre-2020 observation data to use as a base for synthetic forecasts
+    pre_2020_obs_query = select(db.weather_obs_tbl).where(
+        and_(db.weather_obs_tbl.c.location_id == loc_id,
+             db.weather_obs_tbl.c.datetime >= start_time,
+             db.weather_obs_tbl.c.datetime < _MIN_FORECAST_DATE))
+    pre_2020_obs_data = [dict(row) for row in await database.fetch_all(pre_2020_obs_query)]
+
+    # 2. Fetch existing historical data from the database (2020-2024)
+    obs_query = select(db.weather_obs_tbl).where(
+        and_(db.weather_obs_tbl.c.location_id == loc_id,
+             db.weather_obs_tbl.c.datetime >= historical_start,
+             db.weather_obs_tbl.c.datetime <= historical_end))
+    existing_obs_data = [dict(row) for row in await database.fetch_all(obs_query)]
+
+    fc_query = select(db.weather_fc_tbl).where(
+        and_(db.weather_fc_tbl.c.location_id == loc_id,
+             db.weather_fc_tbl.c.target_time >= historical_start,
+             db.weather_fc_tbl.c.target_time <= historical_end))
+    existing_fc_data = [dict(row) for row in await database.fetch_all(fc_query)]
+
+    # 3. Determine and fetch missing historical data from the external API
+    existing_obs_ranges, existing_fc_ranges = await get_existing_weather_time_ranges(
+        {loc_id}, historical_start, historical_end
+    )
+
+    # 3.1 Calculate and fetch missing historical observation data
+    newly_fetched_obs = []
+    missing_hist_obs_ranges = calculate_missing_time_ranges(historical_start, historical_end, existing_obs_ranges.get(loc_id, []))
+    if missing_hist_obs_ranges:
+        print(f"Fetching {len(missing_hist_obs_ranges)} missing historical observation time range(s) for location {loc_id}")
+        for obs_start, obs_end in missing_hist_obs_ranges:
+            hist_obs_data = await fetch_external_weather_observations(loc_id, lat, lon, obs_start, obs_end)
+            if hist_obs_data:
+                newly_fetched_obs.extend(hist_obs_data)
+
+    # 3.2 Calculate and fetch missing historical forecast data
+    newly_fetched_fc = []
+    missing_hist_fc_ranges = calculate_missing_time_ranges(historical_start, historical_end, existing_fc_ranges.get(loc_id, []))
+    if missing_hist_fc_ranges:
+        print(f"Fetching {len(missing_hist_fc_ranges)} missing historical forecast time range(s) for location {loc_id}")
+        for fc_start, fc_end in missing_hist_fc_ranges:
+            hist_fc_data = await fetch_external_weather_forecasts(loc_id, lat, lon, fc_start, fc_end)
+            if hist_fc_data:
+                newly_fetched_fc.extend(hist_fc_data)
+
+    # 4. Combine existing and new data to pass to the forecast generator
+    all_historical_obs = existing_obs_data + newly_fetched_obs
+    all_historical_fc = existing_fc_data + newly_fetched_fc
+
+    # 5. Generate synthetic forecast using the complete historical dataset
+    synthetic_fc_data = await create_synthetic_forecast(
+        loc_id, start_time, _MIN_FORECAST_DATE, pre_2020_obs_data, all_historical_obs, all_historical_fc
+    )
+
+    # 6. Return only the newly fetched data for insertion by the caller
+    return newly_fetched_obs, newly_fetched_fc, synthetic_fc_data
+
+
+async def _fetch_weather_for_location(
+    loc_id: int, lat: float, lon: float, start_time: datetime, end_time: datetime,
+    existing_obs_ranges: Dict[int, List[Tuple[datetime, datetime]]],
+    existing_fc_ranges: Dict[int, List[Tuple[datetime, datetime]]]
+) -> Tuple[List[Dict], List[Dict]]:
+    """
+    Fetches missing weather observation and forecast data for a single location.
+    """
+    weather_obs_to_insert = []
+    weather_fc_to_insert = []
+
+    # Calculate missing observation time ranges
+    missing_obs_ranges = calculate_missing_time_ranges(start_time, end_time, existing_obs_ranges.get(loc_id, []))
+    if missing_obs_ranges:
+        print(f"Fetching {len(missing_obs_ranges)} missing observation time range(s) for location {loc_id}")
+        for obs_start, obs_end in missing_obs_ranges:
+            print(f"  - Observations from {obs_start} to {obs_end}")
+            obs_data = await fetch_external_weather_observations(loc_id, lat, lon, obs_start, obs_end)
+            weather_obs_to_insert.extend(obs_data)
+
+    # Calculate missing forecast time ranges
+    missing_fc_ranges = calculate_missing_time_ranges(start_time, end_time, existing_fc_ranges.get(loc_id, []))
+    if missing_fc_ranges:
+        print(f"Fetching {len(missing_fc_ranges)} missing forecast time range(s) for location {loc_id}")
+        for fc_start, fc_end in missing_fc_ranges:
+            print(f"  - Forecasts from {fc_start} to {fc_end}")
+            fc_data = await fetch_external_weather_forecasts(loc_id, lat, lon, fc_start, fc_end)
+            weather_fc_to_insert.extend(fc_data)
+
+    return weather_obs_to_insert, weather_fc_to_insert
+
+
+async def _fetch_price_data(
+    price_region_ids: Set[int], start_time: datetime, end_time: datetime
+) -> List[Dict]:
+    """
+    Fetches electricity price data for the given regions and time range.
+    """
+    prices_to_insert = []
+    # Fetch price data once for each unique region ID present in the batch.
+    # This avoids redundant calls if multiple locations share the same region.
+    for reg_id in price_region_ids:
+        print(f"Fetching electricity prices for region {reg_id} from {start_time} to {end_time}")
+        price_data = await fetch_external_electricity_prices(reg_id, start_time, end_time)
+        prices_to_insert.extend(price_data)
+    return prices_to_insert
 
 
 async def fetch_external_data(
@@ -25,7 +148,6 @@ async def fetch_external_data(
     """
     weather_obs_to_insert: List[Dict] = []
     weather_fc_to_insert: List[Dict] = []
-    prices_to_insert: List[Dict] = []
 
     # Get existing weather data ranges for all locations
     location_ids = set(location_time_ranges.keys())
@@ -49,39 +171,33 @@ async def fetch_external_data(
         lat = location['latitude']
         lon = location['longitude']
 
-        # Calculate missing observation time ranges
-        existing_obs = existing_obs_ranges.get(loc_id, [])
-        missing_obs_ranges = calculate_missing_time_ranges(start_time, end_time, existing_obs)
-        
-        # Calculate missing forecast time ranges
-        existing_fc = existing_fc_ranges.get(loc_id, [])
-        missing_fc_ranges = calculate_missing_time_ranges(start_time, end_time, existing_fc)
+        # If data before _MIN_FORECAST_DATE is requested, fetch all observations and forecasts
+        # from Jan 2020 - end of 2024 for this location.
+        # This data will be used to learn the error and add it to the data before the MIN_FORECAST_DATE.
+        if start_time < _MIN_FORECAST_DATE:
+            # Check if synthetic data for this period already exists to avoid re-generating it.
+            pre_2020_fc_exists = False
+            if loc_id in existing_fc_ranges:
+                for fc_start, fc_end in existing_fc_ranges[loc_id]:
+                    if fc_start <= start_time and fc_end >= _MIN_FORECAST_DATE:
+                        pre_2020_fc_exists = True
+                        print(f"Synthetic forecast for location {loc_id} in range {start_time}-{_MIN_FORECAST_DATE} already exists. Skipping generation.")
+                        break
+            
+            if not pre_2020_fc_exists:
+                hist_obs, hist_fc, synthetic_fc = await _handle_historical_data(loc_id, lat, lon, start_time)
+                weather_obs_to_insert.extend(hist_obs)
+                weather_fc_to_insert.extend(hist_fc)
+                weather_fc_to_insert.extend(synthetic_fc)
 
-        # Fetch only missing observation data
-        if missing_obs_ranges:
-            print(f"Fetching {len(missing_obs_ranges)} missing observation time range(s) for location {loc_id}")
-            for obs_start, obs_end in missing_obs_ranges:
-                print(f"  - Observations from {obs_start} to {obs_end}")
-                obs_data = await fetch_external_weather_observations(loc_id, lat, lon, obs_start, obs_end)
-                weather_obs_to_insert.extend(obs_data)
-        else:
-            print(f"All weather observations already exist for location {loc_id} in requested time range")
+        # Fetch only missing observation and forecast data
+        obs_data, fc_data = await _fetch_weather_for_location(
+            loc_id, lat, lon, start_time, end_time, existing_obs_ranges, existing_fc_ranges
+        )
+        weather_obs_to_insert.extend(obs_data)
+        weather_fc_to_insert.extend(fc_data)
 
-        # Fetch only missing forecast data
-        if missing_fc_ranges:
-            print(f"Fetching {len(missing_fc_ranges)} missing forecast time range(s) for location {loc_id}")
-            for fc_start, fc_end in missing_fc_ranges:
-                print(f"  - Forecasts from {fc_start} to {fc_end}")
-                fc_data = await fetch_external_weather_forecasts(loc_id, lat, lon, fc_start, fc_end)
-                weather_fc_to_insert.extend(fc_data)
-        else:
-            print(f"All weather forecasts already exist for location {loc_id} in requested time range")
-
-    # Fetch price data once for each unique region ID present in the batch.
-    # This avoids redundant calls if multiple locations share the same region.
-    for reg_id in price_region_ids:
-        print(f"Fetching electricity prices for region {reg_id} from {price_start_time} to {price_end_time}")
-        price_data = await fetch_external_electricity_prices(reg_id, price_start_time, price_end_time)
-        prices_to_insert.extend(price_data)
+    prices_to_insert = await _fetch_price_data(price_region_ids, price_start_time, price_end_time)
 
     return weather_obs_to_insert, weather_fc_to_insert, prices_to_insert
+

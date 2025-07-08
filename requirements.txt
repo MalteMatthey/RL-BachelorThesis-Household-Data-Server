@@ -19,3 +19,5 @@ pvlib
 cdsapi
 matplotlib
 timezonefinder
+pyarrow
+fastparquet
