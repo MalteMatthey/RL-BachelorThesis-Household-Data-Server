@@ -52,16 +52,24 @@ def calculate_missing_time_ranges(
         current_end = sorted_ranges[i][1]
         next_start = sorted_ranges[i + 1][0]
         
-        if current_end < next_start:
-            gap_start = max(current_end, requested_start)
-            gap_end = min(next_start, requested_end)
-            if gap_start < gap_end:
-                missing_ranges.append((gap_start, gap_end))
+        # The gap starts one hour after the end of the current range
+        gap_start = current_end + timedelta(hours=1)
+        
+        if gap_start < next_start:
+            # Ensure the calculated gap is within the overall requested time window
+            effective_gap_start = max(gap_start, requested_start)
+            effective_gap_end = min(next_start, requested_end)
+            
+            if effective_gap_start < effective_gap_end:
+                missing_ranges.append((effective_gap_start, effective_gap_end))
     
     # Check if we need data after the last existing range
     last_end = sorted_ranges[-1][1]
-    if requested_end > last_end:
-        missing_ranges.append((max(last_end, requested_start), requested_end))
+    # The gap starts one hour after the end of the last known range
+    final_gap_start = last_end + timedelta(hours=1)
+
+    if requested_end > final_gap_start:
+        missing_ranges.append((max(final_gap_start, requested_start), requested_end))
     
     return missing_ranges
 

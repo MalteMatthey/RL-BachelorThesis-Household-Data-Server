@@ -19,3 +19,10 @@ pvlib
 cdsapi
 matplotlib
 timezonefinder
+pyarrow
+fastparquet
+seaborn
+lightgbm
+joblib
+scikit-learn
+statsmodels
