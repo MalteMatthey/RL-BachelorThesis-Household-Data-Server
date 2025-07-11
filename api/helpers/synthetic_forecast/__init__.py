@@ -1,0 +1,1 @@
+from .main import create_synthetic_forecast
