@@ -59,12 +59,12 @@ The application uses a service-oriented architecture, containerized for portabil
 
 ### Configuration
 
-1.  **Environment File**: Create a `stack.env` file in the project root. You can copy the structure from `.env.example`:
+1.  **Environment File**: Create a `.env` file in the project root. You can copy the structure from `.env.example`:
     ```bash
-    cp .env.example stack.env
+    cp .env.example .env
     ```
 
-2.  **Fill in Credentials**: Edit `stack.env` and provide the necessary API keys and credentials.
+2.  **Fill in Credentials**: Edit `.env` and provide the necessary API keys and credentials.
 
     ```env
     # Your internal API key to secure the endpoints
