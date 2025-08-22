@@ -49,6 +49,17 @@ if __name__ == "__main__":
         output_path = os.path.join(base_debug_dir, "synthetic_forecast_output.parquet")
         results_df.to_parquet(output_path)
         print(f"Full results saved to: {output_path}")
+        
+        # Save validation data for later use
+        if not validation_df.empty:
+            validation_path = os.path.join(base_debug_dir, "validation_df.parquet")
+            validation_df.to_parquet(validation_path)
+            print(f"Validation data saved to: {validation_path}")
+        
+        if not test_df.empty:
+            test_path = os.path.join(base_debug_dir, "test_df.parquet")
+            test_df.to_parquet(test_path)
+            print(f"Test data saved to: {test_path}")
 
         validate_and_plot_results(
             synthetic_df=results_df,

@@ -46,14 +46,14 @@ async def create_synthetic_forecast(
     # Memory optimization: Create smaller DataFrames and clean up immediately
 
     ### PRODUCTION API ###
-    train_df = learning_df[learning_df['target_time'].dt.year >= 2020].copy()
-    validation_df = pd.DataFrame()
-    test_df = pd.DataFrame()
+    #train_df = learning_df[learning_df['target_time'].dt.year >= 2020].copy()
+    #validation_df = pd.DataFrame()
+    #test_df = pd.DataFrame()
 
     ### TESTING ###
-    # train_df = learning_df[learning_df['target_time'].dt.year >= 2021].copy()
-    # validation_df = learning_df[learning_df['target_time'].dt.year == 2020].copy()
-    # test_df = pd.DataFrame()
+    train_df = learning_df[learning_df['target_time'].dt.year >= 2021].copy()
+    validation_df = learning_df[learning_df['target_time'].dt.year == 2020].copy()
+    test_df = pd.DataFrame()
     
     # Clear the large learning_df from memory
     del learning_df
