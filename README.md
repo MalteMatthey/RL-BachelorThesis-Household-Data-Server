@@ -1,5 +1,7 @@
 # Household Data API
 
+> **⚠️ NOTE:** This project was originally developed and hosted on a **university GitLab** instance. The `.gitlab-ci.yml` file has been retained in this GitHub repository to demonstrate the project's original CI/CD architecture. It showcases a DevOps workflow, including Docker-in-Docker testing, automated Merge Request generation via API, and automated branch synchronization.
+
 This project provides a FastAPI-based API for ingesting, processing, and retrieving time series data related to weather, PV generation, load, and electricity prices. It leverages TimescaleDB for efficient storage and querying of time-based data, and Backblaze B2 for data backup.
 
 ## Key Features
