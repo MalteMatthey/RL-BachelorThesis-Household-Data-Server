@@ -1,5 +1,7 @@
 # Household Data API
 
+> **⚠️ NOTE:** This project was originally developed and hosted on a **university GitLab** instance. The `.gitlab-ci.yml` file has been retained in this GitHub repository to demonstrate the project's original CI/CD architecture. It showcases a DevOps workflow, including Docker-in-Docker testing, automated Merge Request generation via API, and automated branch synchronization.
+
 The Household Data API is a FastAPI service designed to ingest, store, and serve time-series data related to household energy consumption and generation. It provides a backend for energy management systems, reinforcement learning agents, and data analysis tasks. The system is containerized using Docker and includes a TimescaleDB database for time-series data, a CI/CD pipeline for automated testing, and features like PV simulation and synthetic weather forecast generation.
 
 ## Table of Contents
